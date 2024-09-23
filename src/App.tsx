@@ -1,13 +1,14 @@
 import './App.css'
+import Visualizer from './components/Visualizer'
 
 function App() {
 
 
   return (
-    <div className="App">
-      <h1>Algorithm Visualizer</h1>
+    <div>
+        <Visualizer ArraySize={50} />
     </div>
-  )
+);
 }
 
 export default App
