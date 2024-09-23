@@ -5,8 +5,8 @@ function App() {
 
 
   return (
-    <div>
-        <Visualizer ArraySize={50} />
+    <div className="fixed bottom-14 left-0 right-0 mx-auto">
+        <Visualizer ArraySize={50}/>
     </div>
 );
 }
