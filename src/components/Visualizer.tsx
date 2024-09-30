@@ -23,6 +23,27 @@ export default class Visualizer extends React.Component {
         this.setState({ array: array });
     }
 
+    insertionSort(){
+
+    }
+
+    mergeSort(){
+
+    }
+
+    quickSort(){
+
+    }
+
+    verifySorted(array: number[]): boolean {
+        for (let i = 0; i < array.length - 1; i++) { 
+            if (array[i] !== array[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     render(): JSX.Element {
         const { array } = this.state;
 
@@ -38,9 +59,20 @@ export default class Visualizer extends React.Component {
                             </div>
                         ))
                     )}
-                    <div className="flex justify-center mt-2">
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.resetArray()}>
+                    <div className="flex justify-center mt-2 space-x-2">
+                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded w-24" onClick={() => this.resetArray()}>
                             Reset
+                        </button>
+                    </div>
+                    <div id="Sorting_Buttons-Container" className="flex justify-center space-x-2 mt-3">
+                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.insertsionSort()}>
+                            Insertion Sort
+                        </button>
+                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.mergeSort()}>
+                            Merge Sort
+                        </button>
+                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.quickSort()}>
+                            Quick Sort
                         </button>
                     </div>
                 </div>
