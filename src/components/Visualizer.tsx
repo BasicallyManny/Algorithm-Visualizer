@@ -41,7 +41,7 @@ export default class Visualizer extends React.Component {
     mergeSort() {
         const sortedArray: number[] = algorithms.mergeSort(this.state.array);
         this.setState({ array: sortedArray });
-        console.log("Merge Sort Status" + this.verifySorted(sortedArray));
+        console.log("Merge Sort Status: " + this.verifySorted(sortedArray));
     }
 
     /**
@@ -50,7 +50,7 @@ export default class Visualizer extends React.Component {
     quickSort() {
         const sortedArray: number[] = algorithms.quickSort(this.state.array);
         this.setState({ array: sortedArray });
-        console.log("Quick Sort Status" + this.verifySorted(sortedArray));
+        console.log("Quick Sort Status: " + this.verifySorted(sortedArray));
     }
 
     handleSort() {
@@ -108,30 +108,28 @@ export default class Visualizer extends React.Component {
 
                 {/* Sorting Buttons */}
                 <div className="flex flex-col items-center mt-8 w-full space-y-2">
-                    <button
-                        className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded w-1/3 sm:w-1/4 text-center"
-                        onClick={() => this.resetArray()}
+                    <select
+                        onChange={(e) => this.setState({ selectedAlgorithm: e.target.value })}
+                        className="bg-purple-700 text-white font-bold rounded mb-2 sm:mb-0 sm:mr-2 w-3/4 sm:w-1/4 text-center"
                         style={{
-                            height: '50px', // Fixed height to match the dropdown and sort button
+                            height: '50px', // Fixed height
                         }}
                     >
-                        Reset
-                    </button>
-
-                    <div id="Sorting_Buttons-Container" className="flex flex-col sm:flex-row justify-center items-center w-full">
-                        <select
-                            onChange={(e) => this.setState({ selectedAlgorithm: e.target.value })}
-                            className="bg-purple-700 text-white font-bold rounded mb-2 sm:mb-0 sm:mr-2 w-3/4 sm:w-1/4 text-center"
+                        <option value="">Select Sorting Algorithm</option>
+                        <option value="insertionSort">Insertion Sort</option>
+                        <option value="mergeSort">Merge Sort</option>
+                        <option value="quickSort">Quick Sort</option>
+                    </select>
+                    <div id="Sorting_Buttons-Container" className="flex flex-cols space-x-4 sm:flex-row justify-center items-center w-full">
+                        <button
+                            className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
+                            onClick={() => this.resetArray()}
                             style={{
-                                height: '50px', // Fixed height
+                                height: '50px', // Fixed height to match the dropdown and sort button
                             }}
                         >
-                            <option value="">Select Sorting Algorithm</option>
-                            <option value="insertionSort">Insertion Sort</option>
-                            <option value="mergeSort">Merge Sort</option>
-                            <option value="quickSort">Quick Sort</option>
-                        </select>
-
+                            Reset
+                        </button>
                         <button
                             className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
                             onClick={() => this.handleSort()}
