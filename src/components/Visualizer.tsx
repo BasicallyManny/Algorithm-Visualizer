@@ -32,7 +32,7 @@ export default class Visualizer extends React.Component {
     insertionSort() {
         const sortedArray: number[] = algorithms.insertionSort(this.state.array);
         this.setState({ array: sortedArray });
-        console.log("Insertion Sort Status" + this.verifySorted(sortedArray));
+        console.log("Insertion Sort Status: " + this.verifySorted(sortedArray));
     }
 
     /**
@@ -51,20 +51,6 @@ export default class Visualizer extends React.Component {
         const sortedArray: number[] = algorithms.quickSort(this.state.array);
         this.setState({ array: sortedArray });
         console.log("Quick Sort Status" + this.verifySorted(sortedArray));
-    }
-
-    /**
-     * Verify if the array is sorted for debugging purposes
-     * @param array 
-     * @returns 
-     */
-    verifySorted(array: number[]): boolean {
-        for (let i = 0; i < array.length - 1; i++) {
-            if (array[i] > array[i + 1]) {  // Ensure ascending order
-                return false;
-            }
-        }
-        return true;
     }
 
     handleSort() {
@@ -92,7 +78,10 @@ export default class Visualizer extends React.Component {
         const { array, selectedAlgorithm } = this.state;
 
         return (
-            <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-4">
+            /**
+             * Visualizer Component
+             */
+            <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-8">
                 <div
                     id="visualizer-wrapper"
                     className="flex justify-center items-end !mt-4"
@@ -116,7 +105,9 @@ export default class Visualizer extends React.Component {
                         ))
                     )}
                 </div>
-                <div className="flex flex-col items-center mt-2 w-full space-y-2">
+
+                {/* Sorting Buttons */}
+                <div className="flex flex-col items-center mt-8 w-full space-y-2">
                     <button
                         className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded w-1/3 sm:w-1/4 text-center"
                         onClick={() => this.resetArray()}
