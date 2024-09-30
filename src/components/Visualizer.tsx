@@ -1,4 +1,5 @@
 import React from "react";
+import * as algorithms from "../algorithms/sortingAlgorithms";
 
 export default class Visualizer extends React.Component {
     constructor(props) {
@@ -21,14 +22,16 @@ export default class Visualizer extends React.Component {
         }
 
         this.setState({ array: array });
+        console.log(array);
     }
 
     insertionSort(){
-
+        const sortedArray = algorithms.insertionSort(this.state.array);
+        this.setState({ array: sortedArray });
+        console.log(sortedArray);
     }
 
     mergeSort(){
-
     }
 
     quickSort(){
@@ -65,7 +68,7 @@ export default class Visualizer extends React.Component {
                         </button>
                     </div>
                     <div id="Sorting_Buttons-Container" className="flex justify-center space-x-2 mt-3">
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.insertsionSort()}>
+                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.insertionSort()}>
                             Insertion Sort
                         </button>
                         <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.mergeSort()}>

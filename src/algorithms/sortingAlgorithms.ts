@@ -7,13 +7,13 @@ export const insertionSort = (array: number[]): number[] => {
     /** iterates through the array*/
     for(let i = 0; i < array.length; i++) {
         /**The key to be inserted */
-        key=array[i];
+        const key:number=array[i];
         /**track the previous element*/
-        j=i-1;
+        let j:number=i-1;
         /*
         *Shift elements of the array, greater than the key, to the right
         */
-        while(j>=0 && array[j]>key) {
+        while(j>=0 && array[j]>key) {   
             array[j+1]=array[j];
             j=j-1;
         }
@@ -22,5 +22,6 @@ export const insertionSort = (array: number[]): number[] => {
         */
         array[j+1]=key  
     }    
+    console.log("Sorted Array Insertion Sort: " + array);
     return array
 }
