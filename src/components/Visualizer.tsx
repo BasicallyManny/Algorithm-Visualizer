@@ -5,7 +5,8 @@ export default class Visualizer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            array: [], // Initialize the state as 'array'
+            array: [],
+            selectedAlgorithm: "", // Initialize selectedAlgorithm state
         };
     }
 
@@ -21,26 +22,66 @@ export default class Visualizer extends React.Component {
             array.push(randomIntFromInterval(5, 730));
         }
 
-        this.setState({ array: array });
-        console.log(array);
+        this.setState({ array });
+        console.log("Array Reset");
     }
 
-    insertionSort(){
-        const sortedArray = algorithms.insertionSort(this.state.array);
+    /**
+     * Insertion Sort handler
+     */
+    insertionSort() {
+        const sortedArray: number[] = algorithms.insertionSort(this.state.array);
         this.setState({ array: sortedArray });
-        console.log(sortedArray);
+        console.log("Insertion Sort Status" + this.verifySorted(sortedArray));
     }
 
-    mergeSort(){
+    /**
+     * Merge Sort handler
+     */
+    mergeSort() {
+        const sortedArray: number[] = algorithms.mergeSort(this.state.array);
+        this.setState({ array: sortedArray });
+        console.log("Merge Sort Status" + this.verifySorted(sortedArray));
     }
 
-    quickSort(){
+    /**
+     * Quick Sort handler
+     */
+    quickSort() {
+        const sortedArray: number[] = algorithms.quickSort(this.state.array);
+        this.setState({ array: sortedArray });
+        console.log("Quick Sort Status" + this.verifySorted(sortedArray));
+    }
 
+    /**
+     * Verify if the array is sorted for debugging purposes
+     * @param array 
+     * @returns 
+     */
+    verifySorted(array: number[]): boolean {
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i] > array[i + 1]) {  // Ensure ascending order
+                return false;
+            }
+        }
+        return true;
+    }
+
+    handleSort() {
+        const { selectedAlgorithm } = this.state;
+
+        if (selectedAlgorithm === "insertionSort") {
+            this.insertionSort();
+        } else if (selectedAlgorithm === "mergeSort") {
+            this.mergeSort();
+        } else if (selectedAlgorithm === "quickSort") {
+            this.quickSort();
+        }
     }
 
     verifySorted(array: number[]): boolean {
-        for (let i = 0; i < array.length - 1; i++) { 
-            if (array[i] !== array[i + 1]) {
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i] > array[i + 1]) {
                 return false;
             }
         }
@@ -48,34 +89,67 @@ export default class Visualizer extends React.Component {
     }
 
     render(): JSX.Element {
-        const { array } = this.state;
+        const { array, selectedAlgorithm } = this.state;
 
         return (
-            <div id="visualizer-container" className="flex justify-center align-baseline flex-col items-center ">
-                <div id="visualizer-wrapper">
+            <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-4">
+                <div
+                    id="visualizer-wrapper"
+                    className="flex justify-center items-end !mt-4"
+                    style={{
+                        height: '80vh',
+                        width: '80vw',
+                    }}
+                >
                     {array.length === 0 ? (
                         <p>No data to display</p>
                     ) : (
                         array.map((value, idx) => (
-                            <div id="bar-container" className="justify-center inline-block bg-teal-400 border-2	">
-                                <div style={{ height: `${value}px` }} className="m-1 w-3" key={idx}></div>
-                            </div>
+                            <div
+                                key={idx}
+                                className={`bg-purple-400 border-2 ${window.innerWidth <= 430 ? 'border-purple-500' : 'border-purple-600'}`} // Purple border for screens <= 430px
+                                style={{
+                                    height: `${value * 0.1}vh`,
+                                    width: '1.5vw',
+                                }}
+                            ></div>
                         ))
                     )}
-                    <div className="flex justify-center mt-2 space-x-2">
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded w-24" onClick={() => this.resetArray()}>
-                            Reset
-                        </button>
-                    </div>
-                    <div id="Sorting_Buttons-Container" className="flex justify-center space-x-2 mt-3">
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.insertionSort()}>
-                            Insertion Sort
-                        </button>
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.mergeSort()}>
-                            Merge Sort
-                        </button>
-                        <button className="bg-teal-400 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" onClick={() => this.quickSort()}>
-                            Quick Sort
+                </div>
+                <div className="flex flex-col items-center mt-2 w-full space-y-2">
+                    <button
+                        className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded w-1/3 sm:w-1/4 text-center"
+                        onClick={() => this.resetArray()}
+                        style={{
+                            height: '50px', // Fixed height to match the dropdown and sort button
+                        }}
+                    >
+                        Reset
+                    </button>
+
+                    <div id="Sorting_Buttons-Container" className="flex flex-col sm:flex-row justify-center items-center w-full">
+                        <select
+                            onChange={(e) => this.setState({ selectedAlgorithm: e.target.value })}
+                            className="bg-purple-700 text-white font-bold rounded mb-2 sm:mb-0 sm:mr-2 w-3/4 sm:w-1/4 text-center"
+                            style={{
+                                height: '50px', // Fixed height
+                            }}
+                        >
+                            <option value="">Select Sorting Algorithm</option>
+                            <option value="insertionSort">Insertion Sort</option>
+                            <option value="mergeSort">Merge Sort</option>
+                            <option value="quickSort">Quick Sort</option>
+                        </select>
+
+                        <button
+                            className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
+                            onClick={() => this.handleSort()}
+                            disabled={!selectedAlgorithm} // Disable button if no algorithm is selected
+                            style={{
+                                height: '50px', // Fixed height
+                            }}
+                        >
+                            Sort
                         </button>
                     </div>
                 </div>
@@ -85,8 +159,6 @@ export default class Visualizer extends React.Component {
 }
 
 // Function to generate a random integer between min and max
-function randomIntFromInterval(min, max) {
+function randomIntFromInterval(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-
-

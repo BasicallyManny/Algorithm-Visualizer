@@ -22,6 +22,5 @@ export const insertionSort = (array: number[]): number[] => {
         */
         array[j+1]=key  
     }    
-    console.log("Sorted Array Insertion Sort: " + array);
     return array
 }
