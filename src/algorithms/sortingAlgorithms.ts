@@ -30,7 +30,7 @@ export const insertionSort = (array: number[]): number[] => {
  * @param arrayOne 
  * @param arrayTwo 
  */
-const merge = (arrayOne: number[], arrayTwo: number[]): number[] => {
+const merge = (arrayOne: number[],arrayTwo: number[]): number[] => {
     /**Initialize the indicies for the right and left arrays */
     let i:number=0;
     let j:number=0;
