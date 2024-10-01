@@ -1,9 +1,9 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
-//import { motion } from 'framer-motion'; // Import framer-motion
+import { motion } from 'framer-motion'; // Import framer-motion
 
 // Default Animation variables
-const ANIMATION_SPEED_MS = 1; // Adjusted for smoother animation
+const ANIMATION_SPEED_MS = 30; // Adjusted for smoother animation
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 
@@ -113,12 +113,14 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     }}
                 >
                     {array.map((value, idx) => (
-                        <div
-                            className="array-bar"
+                        <motion.div
+                            className="array-bar border-2 border-black"
                             key={idx}
+                            initial={{ height: '0px' }} // Initial height for animation
+                            animate={{ height: `${value}px` }} // Animate to the current height
+                            transition={{ type: 'spring', stiffness: 100 }} // Spring animation properties
                             style={{
                                 backgroundColor: PRIMARY_COLOR,
-                                height: `${value}px`,
                                 width: `${(100 / array.length)}%`, // Ensure bars fit in the container
                             }}
                         />
