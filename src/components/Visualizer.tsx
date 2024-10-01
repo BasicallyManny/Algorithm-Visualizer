@@ -1,8 +1,25 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
+//import { motion } from 'framer-motion'; // Import framer-motion
 
-export default class Visualizer extends React.Component {
-    constructor(props) {
+// Default Animation variables
+const ANIMATION_SPEED_MS = 1; // Adjusted for smoother animation
+const PRIMARY_COLOR = 'turquoise';
+const SECONDARY_COLOR = 'red';
+
+// Define the types for props (if any are needed)
+interface VisualizerProps {
+    ArraySize?: number; // Optional prop for setting the array size
+}
+
+// Define the state types
+interface VisualizerState {
+    array: number[];
+    selectedAlgorithm: string;
+}
+
+export default class Visualizer extends React.Component<VisualizerProps, VisualizerState> {
+    constructor(props: VisualizerProps) {
         super(props);
         this.state = {
             array: [],
@@ -15,47 +32,54 @@ export default class Visualizer extends React.Component {
     }
 
     resetArray(): void {
-        const array = [];
+        const array: number[] = [];
         const size = this.props.ArraySize || 50; // Default size if prop is not provided
-
         for (let i = 0; i < size; i++) {
             array.push(randomIntFromInterval(5, 730));
         }
-
         this.setState({ array });
         console.log("Array Reset");
     }
 
-    /**
-     * Insertion Sort handler
-     */
-    insertionSort() {
+    insertionSort(): void {
         const sortedArray: number[] = algorithms.insertionSort(this.state.array);
         this.setState({ array: sortedArray });
         console.log("Insertion Sort Status: " + this.verifySorted(sortedArray));
     }
 
-    /**
-     * Merge Sort handler
-     */
     mergeSort() {
-        const sortedArray: number[] = algorithms.mergeSort(this.state.array);
-        this.setState({ array: sortedArray });
-        console.log("Merge Sort Status: " + this.verifySorted(sortedArray));
+        const animations = algorithms.mergeSortDispatcher(this.state.array);
+        for (let i = 0; i < animations.length; i++) {
+            const arrayBars = document.getElementsByClassName('array-bar');
+            const isColorChange = i % 3 !== 2;
+            if (isColorChange) {
+                const [barOneIdx, barTwoIdx]: [number, number] = animations[i];
+                const barOneStyle: CSSStyleDeclaration = arrayBars[barOneIdx].style;
+                const barTwoStyle: CSSStyleDeclaration = arrayBars[barTwoIdx].style;
+                const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = color;
+                    barTwoStyle.backgroundColor = color;
+                }, i * ANIMATION_SPEED_MS);
+            } else {
+                setTimeout(() => {
+                    const [barOneIdx, newHeight]: [number, number] = animations[i];
+                    const barOneStyle: CSSStyleDeclaration = arrayBars[barOneIdx].style;
+                    barOneStyle.height = `${newHeight}px`;
+                }, i * ANIMATION_SPEED_MS);
+            }
+        }
     }
 
-    /**
-     * Quick Sort handler
-     */
-    quickSort() {
+    quickSort(): void {
         const sortedArray: number[] = algorithms.quickSort(this.state.array);
         this.setState({ array: sortedArray });
         console.log("Quick Sort Status: " + this.verifySorted(sortedArray));
     }
 
-    handleSort() {
+    handleSort(): void {
         const { selectedAlgorithm } = this.state;
-
         if (selectedAlgorithm === "insertionSort") {
             this.insertionSort();
         } else if (selectedAlgorithm === "mergeSort") {
@@ -75,12 +99,10 @@ export default class Visualizer extends React.Component {
     }
 
     render(): JSX.Element {
-        const { array, selectedAlgorithm } = this.state;
+        const { array } = this.state;
+        console.log(array); // Check that the array is populated
 
         return (
-            /**
-             * Visualizer Component
-             */
             <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-8">
                 <div
                     id="visualizer-wrapper"
@@ -90,29 +112,25 @@ export default class Visualizer extends React.Component {
                         width: '80vw',
                     }}
                 >
-                    {array.length === 0 ? (
-                        <p>No data to display</p>
-                    ) : (
-                        array.map((value, idx) => (
-                            <div
-                                key={idx}
-                                className={`bg-purple-400 border-2 ${window.innerWidth <= 430 ? 'border-purple-500' : 'border-purple-600'}`} // Purple border for screens <= 430px
-                                style={{
-                                    height: `${value * 0.1}vh`,
-                                    width: '1.5vw',
-                                }}
-                            ></div>
-                        ))
-                    )}
+                    {array.map((value, idx) => (
+                        <div
+                            className="array-bar"
+                            key={idx}
+                            style={{
+                                backgroundColor: PRIMARY_COLOR,
+                                height: `${value}px`,
+                                width: `${(100 / array.length)}%`, // Ensure bars fit in the container
+                            }}
+                        />
+                    ))}
                 </div>
 
-                {/* Sorting Buttons */}
                 <div className="flex flex-col items-center mt-8 w-full space-y-2">
                     <select
                         onChange={(e) => this.setState({ selectedAlgorithm: e.target.value })}
                         className="bg-purple-700 text-white font-bold rounded mb-2 sm:mb-0 sm:mr-2 w-3/4 sm:w-1/4 text-center"
                         style={{
-                            height: '50px', // Fixed height
+                            height: '50px',
                         }}
                     >
                         <option value="">Select Sorting Algorithm</option>
@@ -125,7 +143,7 @@ export default class Visualizer extends React.Component {
                             className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
                             onClick={() => this.resetArray()}
                             style={{
-                                height: '50px', // Fixed height to match the dropdown and sort button
+                                height: '50px',
                             }}
                         >
                             Reset
@@ -133,9 +151,9 @@ export default class Visualizer extends React.Component {
                         <button
                             className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
                             onClick={() => this.handleSort()}
-                            disabled={!selectedAlgorithm} // Disable button if no algorithm is selected
+                            disabled={!this.state.selectedAlgorithm}
                             style={{
-                                height: '50px', // Fixed height
+                                height: '50px',
                             }}
                         >
                             Sort
