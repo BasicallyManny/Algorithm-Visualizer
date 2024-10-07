@@ -25,24 +25,35 @@ export const insertionSort = (array: number[]): number[] => {
   return array;
 };
 
+/**
+ * Merges the two subarrays into a single sorted array and records the animations representing the the comparisons and swaps
+ * @param mainArray 
+ * @param startIdx 
+ * @param middleIdx 
+ * @param endIdx 
+ * @param auxiliaryArray 
+ * @param animations 
+ * 
+ * Standard Merge Sort Sorting algorithm but pushes the indexes of the comparisons and swaps into the animations array
+ */
 function merge(
-  mainArray: number[],
-  startIdx: number,
-  middleIdx: number,
-  endIdx: number,
-  auxiliaryArray: number[],
-  animations: [number, number][]
+  mainArray: number[], //The original array that is being sorted.
+  startIdx: number, //The starting index of the current subarray.
+  middleIdx: number, //The middle index that separates the two subarrays to be merged.
+  endIdx: number, //The ending index of the current subarray.
+  auxiliaryArray: number[], //An auxiliary array that is used to store the sorted subarrays.
+  animations: [number, number][]//an array of animations to store the comparisons and swaps performed during the merge process.
 ) {
-  let k = startIdx;
-  let i = startIdx;
-  let j = middleIdx + 1;
+  let k = startIdx; //main array pointer
+  let i = startIdx; //left subarray pointer
+  let j = middleIdx + 1; //right subarray pointer
 
+  //Iterate throught the right and left subarrays
+  //MERGE THE TWO SUBARRAYS
   while (i <= middleIdx && j <= endIdx) {
-    // These are the values that we're comparing; we push them once
-    // to change their color.
+    // These are the values that we're comparing; we push them once to change their color.
     animations.push([i, j]);
-    // These are the values that we're comparing; we push them a second
-    // time to revert their color.
+    //revert their color.
     animations.push([i, j]);
     if (auxiliaryArray[i] <= auxiliaryArray[j]) {
       // We overwrite the value at index k in the original array with the
@@ -56,7 +67,11 @@ function merge(
       mainArray[k++] = auxiliaryArray[j++];
     }
   }
+  /**
+   * MERGE THE REMAINING ELEMENTS
+   */
 
+  //LEFT SUBARRAY
   while (i <= middleIdx) {
     // These are the values that we're comparing; we push them once
     // to change their color.
@@ -70,6 +85,7 @@ function merge(
     mainArray[k++] = auxiliaryArray[i++];
   }
 
+  //RIGHT SUBARRAY
   while (j <= endIdx) {
     // These are the values that we're comparing; we push them once
     // to change their color.
@@ -85,28 +101,35 @@ function merge(
 }
 
 /**
- * merge sort function
+ * Recursive implementation of the Merge Sort algorithm
  * @param array
  * @returns
  */
 function mergeSort(
-  mainArray: number[],
-  startIdx: number,
-  endIdx: number,
-  auxiliaryArray: number[],
-  animations: [number, number][]
+  mainArray: number[], //the original array that is being sorted
+  startIdx: number, //the starting index of the current subarray
+  endIdx: number, //the ending index of the current subarray
+  auxiliaryArray: number[], //an auxiliary array that is used to store the sorted subarrays
+  animations: [number, number][]//The array of animations to store the comparisons and swaps performed during the merge process
 ) {
+  //BASE CASE: The subarray is of length 1 or 0
   if (startIdx === endIdx) return;
+
+  //Split array into 2 halves by the middle index
   const middleIdx = Math.floor((startIdx + endIdx) / 2);
   mergeSort(auxiliaryArray, startIdx, middleIdx, mainArray, animations);
   mergeSort(auxiliaryArray, middleIdx + 1, endIdx, mainArray, animations);
+  //After recursion, merge the two sorted subarrays
   merge(mainArray, startIdx, middleIdx, endIdx, auxiliaryArray, animations);
-}
-
+}/**
+ * Initiate sorting and collection of animation steps
+ * @param array  THE ARRAY TO BE SORTED
+ * @returns animations array
+ */
 export function mergeSortDispatcher(array: number[]): [number, number][] {
-  const animations: [number, number][] = [];
-  if (array.length <= 1) return array;
-  const auxiliaryArray = array.slice();
-  mergeSort(array, 0, array.length - 1, auxiliaryArray, animations);
-  return animations;
+  const animations: [number, number][] = []; //CREATE THE ANIMATION ARRAY
+  if (array.length <= 1) return array; //BASE CASE: The subarray is of length 1 or 0
+  const auxiliaryArray = array.slice(); //CREATE THE AUXILIARY ARRAY
+  mergeSort(array, 0, array.length - 1, auxiliaryArray, animations); //callmergeSort
+  return animations; //return the animation array
 }
