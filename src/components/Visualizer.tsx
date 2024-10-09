@@ -53,28 +53,43 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     //     console.log("Insertion Sort Status: " + this.verifySorted(sortedArray));
     // }
     insertionSort() {
-        const animations = algorithms.insertionSortDispatcher(this.state.array);
-        const arrayBars = document.getElementsByClassName('array-bar');
+        const animations: [number, number][] = algorithms.insertionSortDispatcher(this.state.array);
+        const arrayBars = document.getElementsByClassName('array-bar') as HTMLCollectionOf<HTMLDivElement>;
     
         for (let i = 0; i < animations.length; i++) {
             const [barIdx, newHeight] = animations[i];
-    
-            // Change color of the bar being compared
             const barStyle = arrayBars[barIdx].style;
-            barStyle.backgroundColor = SECONDARY_COLOR;
+    
+            // Set the color for comparison (secondary color)
+            if (i % 3 === 0) {
+                setTimeout(() => {
+                    barStyle.backgroundColor = PRIMARY_COLOR; // Highlight during comparison
+                }, i * ANIMATION_SPEED_MS);
+            }
     
             // Animate height change
             setTimeout(() => {
+                // Update the height of the bar
                 barStyle.height = `${newHeight}px`;
-                barStyle.backgroundColor = PRIMARY_COLOR; // Reset color after height change
-            }, i * ANIMATION_SPEED_MS);
+    
+                // If this is a bar that has been sorted, reset to primary color
+                if (i % 3 === 2) {
+                    barStyle.backgroundColor = PRIMARY_COLOR; // Set to primary color after sorting
+                } else {
+                    // Reset to secondary color for all other bars
+                    barStyle.backgroundColor = SECONDARY_COLOR; // Reset to secondary color
+                }
+            }, (i + 1) * ANIMATION_SPEED_MS); // Increment timeout to ensure color change is visible
+        }
+    
+        // Reset all bars to PRIMARY_COLOR in reverse order
+        for (let i = arrayBars.length - 1; i >= 0; i--) {
+            setTimeout(() => {
+                const barStyle = arrayBars[i].style;
+                barStyle.backgroundColor = PRIMARY_COLOR; // Reset to primary color one at a time in reverse
+            }, (animations.length + (arrayBars.length - 1 - i) + 1) * ANIMATION_SPEED_MS); // Stagger the reset
         }
     }
-    
-    
-    
-    
-
     /**
      * Calls the mergeSortDispatcher from sortingAlgorithms.ts
      * 

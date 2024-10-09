@@ -33,6 +33,7 @@
  * @param array The array to be sorted.
  * @returns An array of animations for visualization.
  */
+
 function insertionSort(array: number[]): [number, number][] {
   const animations: [number, number][] = [];
   const n = array.length;
@@ -41,23 +42,21 @@ function insertionSort(array: number[]): [number, number][] {
       const key = array[i];
       let j = i - 1;
 
-      // Capture the animation for highlighting the current element
-      animations.push([i, i]); // Highlight current element
+      // Highlight the current element being compared (key)
+      animations.push([i, i]); // Highlight current element (key)
 
       while (j >= 0 && array[j] > key) {
-          // Capture color change for comparison
+          // Push animation for color change during comparison
           animations.push([j, j + 1]); // Highlight bar j
-          animations.push([j, j + 1]); // Revert color of bar j
+          animations.push([j, j]); // Reset color after comparison, keep height unchanged
 
-          // Move elements to their correct position
-          array[j + 1] = array[j];
-
-          // Update bar height after moving elements
-          animations.push([j + 1, array[j]]); // Update height of the bar that moved
+          // Move elements to the right without changing their heights yet
+          animations.push([j + 1, array[j]]); // Update height of the moved bar
+          array[j + 1] = array[j]; // Shift the element
           j--;
       }
 
-      // Insert the key into the correct position
+      // Insert the key into its correct position
       array[j + 1] = key;
 
       // Capture the height update when inserting the key
@@ -66,10 +65,6 @@ function insertionSort(array: number[]): [number, number][] {
 
   return animations;
 }
-
-
-
-
 
 /**
  * Merges the two subarrays into a single sorted array and records the animations representing the the comparisons and swaps
