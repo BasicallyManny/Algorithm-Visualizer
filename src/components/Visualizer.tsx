@@ -53,7 +53,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     }
 
     /**THIS IS HORRIBLE BUT IM TOO LAZY AND I WANT TO SLEEP SO TO RESET THE ARRAY IM JUST GOING TO REFRESH THE PAGE ITS 3 AM */
-    refreshPage():void {
+    refreshPage(): void {
         window.location.reload(); // Refresh the entire page
     }
 
@@ -193,14 +193,14 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
 
-        if(selectedAlgorithm === "NOTHING"){
+        if (selectedAlgorithm === "NOTHING") {
             this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
         }
         else if (selectedAlgorithm === "insertionSort") {
-           this.insertionSort();
-        }else if (selectedAlgorithm === "mergeSort") {
+            this.insertionSort();
+        } else if (selectedAlgorithm === "mergeSort") {
             this.mergeSort();
-        }else if (selectedAlgorithm === "quickSort") {
+        } else if (selectedAlgorithm === "quickSort") {
             this.quickSort();
         }
     }
