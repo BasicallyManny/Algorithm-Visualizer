@@ -66,6 +66,9 @@ function insertionSort(array: number[]): [number, number][] {
   return animations;
 }
 
+
+
+
 /**
  * Partition function for quick sort
  * @param array

@@ -1,6 +1,10 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
 import { motion } from 'framer-motion'; // Import framer-motion
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Ensure CSS is imported
+
+
 
 // Default Animation variables
 const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
@@ -24,7 +28,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         this.state = {
             //Stores the list of numbers to be stored and be visualized by bars
             array: [],
-            selectedAlgorithm: "", // Initialize selectedAlgorithm state
+            selectedAlgorithm: "NOTHING", // Initialize selectedAlgorithm state
         };
     }
 
@@ -188,14 +192,26 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
      */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
-        if (selectedAlgorithm === "insertionSort") {
-            this.insertionSort();
-        } else if (selectedAlgorithm === "mergeSort") {
+
+        if(selectedAlgorithm === "NOTHING"){
+            this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
+        }
+        else if (selectedAlgorithm === "insertionSort") {
+           this.insertionSort();
+        }else if (selectedAlgorithm === "mergeSort") {
             this.mergeSort();
-        } else if (selectedAlgorithm === "quickSort") {
+        }else if (selectedAlgorithm === "quickSort") {
             this.quickSort();
         }
     }
+
+    notifyUser = (message, type) => {
+        if (type === 'success') {
+            toast.success(message);
+        } else if (type === 'error') {
+            toast.error(message);
+        }
+    };
 
     /**
      * Checks if the array is sorted in ascending order
@@ -220,6 +236,15 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         return (
             //UI ELEMENTS
             <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-8">
+                {/* Toast Container */}
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    closeOnClick
+                    draggable
+                    pauseOnHover
+                />
                 <div
                     id="visualizer-wrapper"
                     className="flex justify-center items-end !mt-4"
@@ -255,7 +280,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             height: '50px',
                         }}
                     >
-                        <option value="">Select Sorting Algorithm</option>
+                        <option value="NOTHING">Select Sorting Algorithm</option>
                         <option value="insertionSort">Insertion Sort</option>
                         <option value="mergeSort">Merge Sort</option>
                         <option value="quickSort">Quick Sort</option>
