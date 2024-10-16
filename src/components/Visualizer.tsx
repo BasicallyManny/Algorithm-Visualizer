@@ -77,8 +77,8 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
 
             setTimeout(() => {
                 if (action === 'compare') {
-                    barOneStyle.backgroundColor = SECONDARY_COLOR; // Highlight comparison
-                    barTwoStyle.backgroundColor = SECONDARY_COLOR; // Highlight pivot
+                    barOneStyle.backgroundColor = "green"; // Highlight comparison
+                    barTwoStyle.backgroundColor = "green"; // Highlight pivot
                 } else if (action === 'swap') {
                     // Perform the swap animation
                     const tempHeight = barOneStyle.height;
@@ -89,8 +89,8 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     barTwoStyle.backgroundColor = PRIMARY_COLOR; // Highlight after swap
                 } else if (action === 'revert') {
                     // Revert color back to default
-                    barOneStyle.backgroundColor = 'green'; // Change to primary color
-                    barTwoStyle.backgroundColor = 'greeb'; // Change to primary color
+                    barOneStyle.backgroundColor = SECONDARY_COLOR; // Change to primary color
+                    barTwoStyle.backgroundColor = SECONDARY_COLOR; // Change to primary color
                 }
             }, i * animationSpeed);
 
