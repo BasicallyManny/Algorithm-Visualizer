@@ -47,31 +47,85 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         this.setState({ array });
         console.log("Array Reset");
     }
-    // insertionSort(): void {
-    //     const sortedArray: number[] = algorithms.insertionSort(this.state.array);
-    //     this.setState({ array: sortedArray });
-    //     console.log("Insertion Sort Status: " + this.verifySorted(sortedArray));
-    // }
+
+    /**THIS IS HORRIBLE BUT IM TOO LAZY AND I WANT TO SLEEP SO TO RESET THE ARRAY IM JUST GOING TO REFRESH THE PAGE ITS 3 AM */
+    refreshPage():void {
+        window.location.reload(); // Refresh the entire page
+    }
+
+    quickSort = () => {
+        const arrayBars = document.getElementsByClassName('array-bar') as HTMLCollectionOf<HTMLDivElement>;
+        const array = this.state.array.slice();
+        const animations = algorithms.quickSortDispatcher(array);
+
+        this.visualizeQuickSort(animations, arrayBars, ANIMATION_SPEED_MS);
+    };
+
+    // Visualize function
+    visualizeQuickSort(animations: [number, number, string][], arrayBars: HTMLCollectionOf<HTMLDivElement>, animationSpeed: number) {
+        for (let i = 0; i < animations.length; i++) {
+            const [barIdx1, barIdx2, action] = animations[i];
+
+            // Ensure we don't access out-of-bounds indexes
+            if (barIdx1 >= arrayBars.length || barIdx2 >= arrayBars.length) {
+                console.error(`Invalid index access: ${barIdx1}, ${barIdx2}`);
+                continue;
+            }
+
+            const barOneStyle = arrayBars[barIdx1].style;
+            const barTwoStyle = arrayBars[barIdx2].style;
+
+            setTimeout(() => {
+                if (action === 'compare') {
+                    barOneStyle.backgroundColor = SECONDARY_COLOR; // Highlight comparison
+                    barTwoStyle.backgroundColor = SECONDARY_COLOR; // Highlight pivot
+                } else if (action === 'swap') {
+                    // Perform the swap animation
+                    const tempHeight = barOneStyle.height;
+                    barOneStyle.height = barTwoStyle.height; // Swap heights visually
+                    barTwoStyle.height = tempHeight;
+
+                    barOneStyle.backgroundColor = PRIMARY_COLOR; // Highlight after swap
+                    barTwoStyle.backgroundColor = PRIMARY_COLOR; // Highlight after swap
+                } else if (action === 'revert') {
+                    // Revert color back to default
+                    barOneStyle.backgroundColor = 'green'; // Change to primary color
+                    barTwoStyle.backgroundColor = 'greeb'; // Change to primary color
+                }
+            }, i * animationSpeed);
+
+            // Reset all bars to PRIMARY_COLOR in reverse order
+            for (let i = arrayBars.length - 1; i >= 0; i--) {
+                setTimeout(() => {
+                    const barStyle = arrayBars[i].style;
+                    barStyle.backgroundColor = PRIMARY_COLOR; // Reset to primary color one at a time in reverse
+                }, (animations.length + (arrayBars.length - 1 - i) + 1) * ANIMATION_SPEED_MS); // Stagger the reset
+            }
+        }
+    }
+
+
+
     insertionSort() {
         const animations: [number, number][] = algorithms.insertionSortDispatcher(this.state.array);
         const arrayBars = document.getElementsByClassName('array-bar') as HTMLCollectionOf<HTMLDivElement>;
-    
+
         for (let i = 0; i < animations.length; i++) {
             const [barIdx, newHeight] = animations[i];
             const barStyle = arrayBars[barIdx].style;
-    
+
             // Set the color for comparison (secondary color)
             if (i % 3 === 0) {
                 setTimeout(() => {
                     barStyle.backgroundColor = PRIMARY_COLOR; // Highlight during comparison
                 }, i * ANIMATION_SPEED_MS);
             }
-    
+
             // Animate height change
             setTimeout(() => {
                 // Update the height of the bar
                 barStyle.height = `${newHeight}px`;
-    
+
                 // If this is a bar that has been sorted, reset to primary color
                 if (i % 3 === 2) {
                     barStyle.backgroundColor = PRIMARY_COLOR; // Set to primary color after sorting
@@ -81,7 +135,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 }
             }, (i + 1) * ANIMATION_SPEED_MS); // Increment timeout to ensure color change is visible
         }
-    
+
         // Reset all bars to PRIMARY_COLOR in reverse order
         for (let i = arrayBars.length - 1; i >= 0; i--) {
             setTimeout(() => {
@@ -89,6 +143,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 barStyle.backgroundColor = PRIMARY_COLOR; // Reset to primary color one at a time in reverse
             }, (animations.length + (arrayBars.length - 1 - i) + 1) * ANIMATION_SPEED_MS); // Stagger the reset
         }
+        console.log("Insertion Sort Status: " + this.verifySorted(this.state.array));
     }
     /**
      * Calls the mergeSortDispatcher from sortingAlgorithms.ts
@@ -126,12 +181,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             }
         }
         console.log("Merge Sort Status: " + this.verifySorted(this.state.array));
-    }
-
-    quickSort(): void {
-        const sortedArray: number[] = algorithms.quickSort(this.state.array);
-        this.setState({ array: sortedArray });
-        console.log("Quick Sort Status: " + this.verifySorted(sortedArray));
     }
 
     /**
@@ -214,7 +263,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     <div id="Sorting_Buttons-Container" className="flex flex-cols space-x-4 sm:flex-row justify-center items-center w-full">
                         <button
                             className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
-                            onClick={() => this.resetArray()}
+                            onClick={() => this.refreshPage()}
                             style={{
                                 height: '50px',
                             }}
