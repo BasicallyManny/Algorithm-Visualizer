@@ -1,74 +1,35 @@
 /**
- *
- * @param array
- * @param animations
- */
-// export const insertionSort = (
-//   array: number[],
-//   animations: [number, number][]
-// ): number[] => {
-//   /** iterates through the array*/
-//   for (let i = 1; i < array.length; i++) {
-//     /**The key to be inserted */
-//     const key: number = array[i];
-//     /**track the previous element*/
-//     let j: number = i - 1;
-//     /*
-//      *Shift elements of the array, greater than the key, to the right
-//      */
-//     while (j >= 0 && array[j] > key) {
-//       array[j + 1] = array[j];
-//       j = j - 1;
-//       animations.push([j, j + 1]);
-//     }
-//     /*
-//      *Place the key at its correct position
-//      */
-//     array[j + 1] = key;
-//     animations.push([j + 1, j]);
-//   }
-// };
-/**
  * Performs the insertion sort algorithm and records animations for sorting visualization.
  * @param array The array to be sorted.
  * @returns An array of animations for visualization.
  */
-function insertionSort(array: number[]): [number, number][] {
-  const animations: [number, number][] = [];
-  const n = array.length;
+function insertionSort(
+  mainArray: number[], // The original array that is being sorted.
+  animations: [number, number][] // An array of animations to store the comparisons performed during the sorting process.
+) {
+  for (let i = 1; i < mainArray.length; i++) {
+    const currentValue = mainArray[i];
+    let j = i - 1;
 
-  for (let i = 1; i < n; i++) {
-      const key = array[i];
-      let j = i - 1;
+    // Push the current element for color change (highlight the bar being processed)
+    animations.push([i, currentValue]); // Change color for the current element
 
-      // Highlight the current element being compared (key)
-      animations.push([i, i]); // Highlight current element (key)
+    // Find the correct position for currentValue
+    while (j >= 0 && mainArray[j] > currentValue) {
+      // Push animations for color change
+      animations.push([j, mainArray[j]]); // Highlight the bar being compared
+      animations.push([j, mainArray[j]]); // Revert color for the element being compared
 
-      while (j >= 0 && array[j] > key) {
-          // Record the height of the element being moved (but do not change it yet)
-          animations.push([j + 1, array[j]]); // This will be the height of the shifted bar
-          
-          // Highlight j for color change
-          animations.push([j, j]); // Reset color after comparison
-          // No need to update the height of the bar here as it will visually change later
-
-          // Move elements to the right without changing their heights yet
-          array[j + 1] = array[j]; // Shift the element
-          j--;
-      }
-
-      // Insert the key into its correct position
-      array[j + 1] = key;
-
-      // Capture the height update when inserting the key
-      animations.push([j + 1, key]); // Update height of the key's position
+      // Push animations to swap the bars (keep height constant)
+      animations.push([j + 1, mainArray[j]]); // Simulate moving the larger element
+      mainArray[j + 1] = mainArray[j]; // Shift the larger element to the right
+      j--;
+    }
+    // Insert the currentValue into its correct position
+    animations.push([j + 1, currentValue]); // Show where the current value is placed
+    mainArray[j + 1] = currentValue; // Place the current value in the array
   }
-
-  return animations;
 }
-
-
-
 /**
  * Partition function for quick sort
  * @param array
@@ -225,15 +186,16 @@ export function mergeSortDispatcher(array: number[]): [number, number][] {
 }
 
 /**
- * Initiate sorting and collection of animation steps
- * @param array  THE ARRAY TO BE SORTED
+ * Initiate sorting and collection of animation steps for Insertion Sort
+ * @param array THE ARRAY TO BE SORTED
  * @returns animations array
  */
 export function insertionSortDispatcher(array: number[]): [number, number][] {
+  const animations: [number, number][] = []; // CREATE THE ANIMATION ARRAY
   if (array.length <= 1) return array; // BASE CASE: The subarray is of length 1 or 0
-  // Perform the sort and capture animations
-  const animations: [number, number][] = insertionSort(array);
-  return animations;
+  const mainArray = [...array]; // Work on a copy of the array
+  insertionSort(mainArray, animations); // Call insertionSort
+  return animations; // Return the animation array
 }
 
 // Main function to call quicksort and get animations for visualization

@@ -95,29 +95,40 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         });
     }
 
-    insertionSort(): void {
-        const animations: [number, number][] = algorithms.insertionSortDispatcher([...this.state.array]);
-        const barHeights = [...this.state.barHeights]; // Clone current heights
-        const barColors = [...this.state.barColors]; // Clone current colors
+    /**
+ * Insertion Sort Visualization
+ */
+insertionSort() {
+    // Get animations but work on a copy of the array to avoid pre-sorting the state
+    const animations = algorithms.insertionSortDispatcher([...this.state.array]);
+    const barHeights = [...this.state.barHeights];
+    const barColors = [...this.state.barColors];
 
-        animations.forEach((animation, i) => {
-            const [barIdx, newHeight] = animation;
+    animations.forEach((animation, i) => {
+        const isColorChange = i % 3 !== 2;
+        setTimeout(() => {
+            if (isColorChange) {
+                const [barOneIdx, barTwoIdx] = animation;
+                barColors[barOneIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+                barColors[barTwoIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+            } else {
+                const [barOneIdx, newHeight] = animation;
+                barHeights[barOneIdx] = newHeight;
+            }
+            this.setState({ barHeights, barColors });
+        }, i * ANIMATION_SPEED_MS);
+    });
 
+    // Reset all bars to PRIMARY_COLOR after sorting
+    setTimeout(() => {
+        for (let i = 0; i < barColors.length; i++) {
             setTimeout(() => {
-                // Change bar color to indicate comparison
-                if (i % 3 === 0) {
-                    barColors[barIdx] = SECONDARY_COLOR; // Comparison highlight
-                } else if (i % 3 === 2) {
-                    // Update the height of the bar in its correct position
-                    barHeights[barIdx] = newHeight; // This reflects the new sorted height
-                    barColors[barIdx] = PRIMARY_COLOR; // Set back to primary color after sorting
-                }
-
-                // Update state for each step of the animation
-                this.setState({ barHeights, barColors });
+                barColors[i] = PRIMARY_COLOR;
+                this.setState({ barColors });
             }, i * ANIMATION_SPEED_MS);
-        });
-    }
+        }
+    }, animations.length * ANIMATION_SPEED_MS);
+}
 
     /**
      * Merge Sort Visualization
