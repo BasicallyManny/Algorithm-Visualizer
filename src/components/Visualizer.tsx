@@ -1,10 +1,6 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
 import { motion } from 'framer-motion'; // Import framer-motion
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Ensure CSS is imported
-
-
 
 // Default Animation variables
 const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
@@ -18,17 +14,20 @@ interface VisualizerProps {
 
 // Define the state types
 interface VisualizerState {
-    array: number[];
+    array: number[];       // Represents the current array of heights for the bars
     selectedAlgorithm: string;
+    barHeights: number[];  // Stores heights of the bars (initially identical to array)
+    barColors: string[];   // Stores the color of each bar for animation purposes
 }
 
 export default class Visualizer extends React.Component<VisualizerProps, VisualizerState> {
     constructor(props: VisualizerProps) {
         super(props);
         this.state = {
-            //Stores the list of numbers to be stored and be visualized by bars
             array: [],
-            selectedAlgorithm: "NOTHING", // Initialize selectedAlgorithm state
+            selectedAlgorithm: "",
+            barHeights: [], // Initial heights (empty)
+            barColors: [] // Initial colors (empty)
         };
     }
 
@@ -40,16 +39,22 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     }
 
     /**
-     * Resets the array
+     * Resets the array and sets initial heights and colors
      */
     resetArray(): void {
         const array: number[] = [];
-        const size = this.props.ArraySize || 50; // Default size if prop is not provided
+        const size = this.props.ArraySize || 50;
+        const barColors: string[] = Array(size).fill(PRIMARY_COLOR); // Default all colors to PRIMARY_COLOR
+
         for (let i = 0; i < size; i++) {
             array.push(randomIntFromInterval(5, 730));
         }
-        this.setState({ array });
-        console.log("Array Reset");
+
+        this.setState({
+            array,
+            barHeights: array,  // Initialize barHeights as the array values
+            barColors,          // Initialize all bars to PRIMARY_COLOR
+        });
     }
 
     /**THIS IS HORRIBLE BUT IM TOO LAZY AND I WANT TO SLEEP SO TO RESET THE ARRAY IM JUST GOING TO REFRESH THE PAGE ITS 3 AM */
@@ -57,161 +62,115 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         window.location.reload(); // Refresh the entire page
     }
 
+    /**
+     * Quick Sort Visualization
+     */
     quickSort = () => {
-        const arrayBars = document.getElementsByClassName('array-bar') as HTMLCollectionOf<HTMLDivElement>;
         const array = this.state.array.slice();
         const animations = algorithms.quickSortDispatcher(array);
 
-        this.visualizeQuickSort(animations, arrayBars, ANIMATION_SPEED_MS);
+        // Handle animations through state
+        this.visualizeQuickSort(animations);
     };
 
-    // Visualize function
-    visualizeQuickSort(animations: [number, number, string][], arrayBars: HTMLCollectionOf<HTMLDivElement>, animationSpeed: number) {
-        for (let i = 0; i < animations.length; i++) {
-            const [barIdx1, barIdx2, action] = animations[i];
+    visualizeQuickSort(animations: [number, number, string][]) {
+        const barHeights = [...this.state.barHeights];
+        const barColors = [...this.state.barColors];
 
-            // Ensure we don't access out-of-bounds indexes
-            if (barIdx1 >= arrayBars.length || barIdx2 >= arrayBars.length) {
-                console.error(`Invalid index access: ${barIdx1}, ${barIdx2}`);
-                continue;
-            }
-
-            const barOneStyle = arrayBars[barIdx1].style;
-            const barTwoStyle = arrayBars[barIdx2].style;
-
+        animations.forEach(([barIdx1, barIdx2, action], i) => {
             setTimeout(() => {
                 if (action === 'compare') {
-                    barOneStyle.backgroundColor = "green"; // Highlight comparison
-                    barTwoStyle.backgroundColor = "green"; // Highlight pivot
+                    barColors[barIdx1] = "green";
+                    barColors[barIdx2] = "green";
                 } else if (action === 'swap') {
-                    // Perform the swap animation
-                    const tempHeight = barOneStyle.height;
-                    barOneStyle.height = barTwoStyle.height; // Swap heights visually
-                    barTwoStyle.height = tempHeight;
-
-                    barOneStyle.backgroundColor = PRIMARY_COLOR; // Highlight after swap
-                    barTwoStyle.backgroundColor = PRIMARY_COLOR; // Highlight after swap
+                    const tempHeight = barHeights[barIdx1];
+                    barHeights[barIdx1] = barHeights[barIdx2];
+                    barHeights[barIdx2] = tempHeight;
                 } else if (action === 'revert') {
-                    // Revert color back to default
-                    barOneStyle.backgroundColor = SECONDARY_COLOR; // Change to primary color
-                    barTwoStyle.backgroundColor = SECONDARY_COLOR; // Change to primary color
+                    barColors[barIdx1] = PRIMARY_COLOR;
+                    barColors[barIdx2] = PRIMARY_COLOR;
                 }
-            }, i * animationSpeed);
-
-            // Reset all bars to PRIMARY_COLOR in reverse order
-            for (let i = arrayBars.length - 1; i >= 0; i--) {
-                setTimeout(() => {
-                    const barStyle = arrayBars[i].style;
-                    barStyle.backgroundColor = PRIMARY_COLOR; // Reset to primary color one at a time in reverse
-                }, (animations.length + (arrayBars.length - 1 - i) + 1) * ANIMATION_SPEED_MS); // Stagger the reset
-            }
-        }
+                this.setState({ barHeights, barColors });
+            }, i * ANIMATION_SPEED_MS);
+        });
     }
 
+    insertionSort(): void {
+        const animations: [number, number][] = algorithms.insertionSortDispatcher([...this.state.array]);
+        const barHeights = [...this.state.barHeights]; // Clone current heights
+        const barColors = [...this.state.barColors]; // Clone current colors
 
+        animations.forEach((animation, i) => {
+            const [barIdx, newHeight] = animation;
 
-    insertionSort() {
-        const animations: [number, number][] = algorithms.insertionSortDispatcher(this.state.array);
-        const arrayBars = document.getElementsByClassName('array-bar') as HTMLCollectionOf<HTMLDivElement>;
-
-        for (let i = 0; i < animations.length; i++) {
-            const [barIdx, newHeight] = animations[i];
-            const barStyle = arrayBars[barIdx].style;
-
-            // Set the color for comparison (secondary color)
-            if (i % 3 === 0) {
-                setTimeout(() => {
-                    barStyle.backgroundColor = PRIMARY_COLOR; // Highlight during comparison
-                }, i * ANIMATION_SPEED_MS);
-            }
-
-            // Animate height change
             setTimeout(() => {
-                // Update the height of the bar
-                barStyle.height = `${newHeight}px`;
-
-                // If this is a bar that has been sorted, reset to primary color
-                if (i % 3 === 2) {
-                    barStyle.backgroundColor = PRIMARY_COLOR; // Set to primary color after sorting
-                } else {
-                    // Reset to secondary color for all other bars
-                    barStyle.backgroundColor = SECONDARY_COLOR; // Reset to secondary color
+                // Change bar color to indicate comparison
+                if (i % 3 === 0) {
+                    barColors[barIdx] = SECONDARY_COLOR; // Comparison highlight
+                } else if (i % 3 === 2) {
+                    // Update the height of the bar in its correct position
+                    barHeights[barIdx] = newHeight; // This reflects the new sorted height
+                    barColors[barIdx] = PRIMARY_COLOR; // Set back to primary color after sorting
                 }
-            }, (i + 1) * ANIMATION_SPEED_MS); // Increment timeout to ensure color change is visible
-        }
 
-        // Reset all bars to PRIMARY_COLOR in reverse order
-        for (let i = arrayBars.length - 1; i >= 0; i--) {
-            setTimeout(() => {
-                const barStyle = arrayBars[i].style;
-                barStyle.backgroundColor = PRIMARY_COLOR; // Reset to primary color one at a time in reverse
-            }, (animations.length + (arrayBars.length - 1 - i) + 1) * ANIMATION_SPEED_MS); // Stagger the reset
-        }
-        console.log("Insertion Sort Status: " + this.verifySorted(this.state.array));
+                // Update state for each step of the animation
+                this.setState({ barHeights, barColors });
+            }, i * ANIMATION_SPEED_MS);
+        });
     }
+
     /**
-     * Calls the mergeSortDispatcher from sortingAlgorithms.ts
-     * 
+     * Merge Sort Visualization
      */
     mergeSort() {
-        //animations array to store the steps for updating the DOM for animations
-        const animations = algorithms.mergeSortDispatcher(this.state.array); //mergeSortDispatcher returns an array of animations
-        //Iterate over the steps of the animation
-        for (let i = 0; i < animations.length; i++) {
-            //Fetch all of the DOM elements with the class 'array-bar'
-            const arrayBars = document.getElementsByClassName('array-bar'); //bars of the array being sorted
-            ///////HANDLE THE COLOR CHANGE OF THE BARS (comparisons)///////
-            const isColorChange = i % 3 !== 2;//every 3rd animation we change the height while the rest we change the color
-            if (isColorChange) {
-                const [barOneIdx, barTwoIdx]: [number, number] = animations[i]; //get the indexes of the bars to be compared
-                //access the inline style properties of the two bars being compared.
-                const barOneStyle: CSSStyleDeclaration = arrayBars[barOneIdx].style;
-                const barTwoStyle: CSSStyleDeclaration = arrayBars[barTwoIdx].style;
-                const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR; //determine which color to change to
-                //delay the execution of the color change
+        // Get animations but work on a copy of the array to avoid pre-sorting the state
+        const animations = algorithms.mergeSortDispatcher([...this.state.array]);
+        const barHeights = [...this.state.barHeights];
+        const barColors = [...this.state.barColors];
+    
+        animations.forEach((animation, i) => {
+            const isColorChange = i % 3 !== 2;
+            setTimeout(() => {
+                if (isColorChange) {
+                    const [barOneIdx, barTwoIdx] = animation;
+                    barColors[barOneIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+                    barColors[barTwoIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+                } else {
+                    const [barOneIdx, newHeight] = animation;
+                    barHeights[barOneIdx] = newHeight;
+                }
+                this.setState({ barHeights, barColors });
+            }, i * ANIMATION_SPEED_MS);
+        });
+    
+        // Reset all bars to PRIMARY_COLOR after sorting
+        setTimeout(() => {
+            for (let i = 0; i < barColors.length; i++) {
                 setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * ANIMATION_SPEED_MS); //ensure the animation is in the correct order
-                ///////HANDLE THE HEIGHT CHANGE OF THE BARS (SWAPS///////
-            } else {
-                setTimeout(() => {
-                    //access the inline style properties of the two bars being swapped.
-                    const [barOneIdx, newHeight]: [number, number] = animations[i];
-                    const barOneStyle: CSSStyleDeclaration = arrayBars[barOneIdx].style;
-                    //update the height of the bar
-                    barOneStyle.height = `${newHeight}px`;
-                }, i * ANIMATION_SPEED_MS); //ensure the animation is in the correct order
+                    barColors[i] = PRIMARY_COLOR;
+                    this.setState({ barColors });
+                }, i * ANIMATION_SPEED_MS);
             }
-        }
-        console.log("Merge Sort Status: " + this.verifySorted(this.state.array));
+        }, animations.length * ANIMATION_SPEED_MS);
     }
+    
 
     /**
      * Calls the appropriate function from when the right value is selected
      */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
-
-        if (selectedAlgorithm === "NOTHING") {
-            this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
-        }
-        else if (selectedAlgorithm === "insertionSort") {
+        if (selectedAlgorithm === "insertionSort") {
             this.insertionSort();
         } else if (selectedAlgorithm === "mergeSort") {
             this.mergeSort();
         } else if (selectedAlgorithm === "quickSort") {
             this.quickSort();
         }
-    }
-
-    notifyUser = (message, type) => {
-        if (type === 'success') {
-            toast.success(message);
-        } else if (type === 'error') {
-            toast.error(message);
+        else if (selectedAlgorithm === "NOTHING") {
+            alert("Please select a sorting algorithm before sorting.");
         }
-    };
+    }
 
     /**
      * Checks if the array is sorted in ascending order
@@ -230,21 +189,11 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
      * @returns 
      */
     render(): JSX.Element {
-        const { array } = this.state;//ARRAY TO BE SORTED
-        console.log(array); // Check that the array is populated
+        const { barHeights, barColors } = this.state;
 
         return (
             //UI ELEMENTS
             <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-8">
-                {/* Toast Container */}
-                <ToastContainer
-                    position="top-right"
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    closeOnClick
-                    draggable
-                    pauseOnHover
-                />
                 <div
                     id="visualizer-wrapper"
                     className="flex justify-center items-end !mt-4"
@@ -253,24 +202,23 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         width: '80vw',
                     }}
                 >
-                    {/*RENDERING ARRAY BARS*/}
-                    {array.map((value, idx) => (
-                        //motion.div for bar animations
+                    {/* RENDERING ARRAY BARS */}
+                    {barHeights.map((height, idx) => (
                         <motion.div
                             className="array-bar border-2 border-black"
-                            key={idx} // assigns a unique key to each bar based on its index in the array.
-                            initial={{ height: '0px' }} // Initial height for animation
-                            animate={{ height: `${value}px` }} // Animate to the current height
-                            transition={{ type: 'spring', stiffness: 100 }} // Spring animation properties
+                            key={idx}
+                            initial={{ height: '0px' }}
+                            animate={{ height: `${height}px` }}
+                            transition={{ type: 'spring', stiffness: 100 }}
                             style={{
-                                backgroundColor: PRIMARY_COLOR,
-                                width: `${(100 / array.length)}%`, // Ensure bars fit in the container
+                                backgroundColor: barColors[idx], // Color controlled by state
+                                width: `${(100 / barHeights.length)}%`, // Ensure bars fit in the container
                             }}
                         />
                     ))}
                 </div>
 
-                {/*UI ELEMENTS*/}
+                {/* UI ELEMENTS */}
                 <div className="flex flex-col items-center mt-8 w-full space-y-2">
                     <select
                         //Upon selection the State of the selectedAlgorithm is updated
