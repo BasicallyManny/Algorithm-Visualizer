@@ -1,33 +1,34 @@
-/**
- * Performs the insertion sort algorithm and records animations for sorting visualization.
- * @param array The array to be sorted.
- * @returns An array of animations for visualization.
- */
 function insertionSort(
   mainArray: number[], // The original array that is being sorted.
   animations: [number, number][] // An array of animations to store the comparisons performed during the sorting process.
 ) {
-  for (let i = 1; i < mainArray.length; i++) {
+  const n = mainArray.length;
+
+  for (let i = 1; i < n; i++) {
     const currentValue = mainArray[i];
     let j = i - 1;
 
-    // Push the current element for color change (highlight the bar being processed)
-    animations.push([i, currentValue]); // Change color for the current element
+    // Highlight the current element being compared (key)
+    animations.push([i, -1]); // Highlight current element (key)
 
     // Find the correct position for currentValue
     while (j >= 0 && mainArray[j] > currentValue) {
-      // Push animations for color change
-      animations.push([j, mainArray[j]]); // Highlight the bar being compared
-      animations.push([j, mainArray[j]]); // Revert color for the element being compared
+      // Push animations for color change (highlighting bars being compared)
+      animations.push([j, j]); // Highlight bar j
+      animations.push([j, j]); // Reset color after comparison
 
-      // Push animations to swap the bars (keep height constant)
-      animations.push([j + 1, mainArray[j]]); // Simulate moving the larger element
+      // Push animation to move the larger element (without height change)
+      animations.push([j + 1, mainArray[j]]); // Move the larger element to the right
       mainArray[j + 1] = mainArray[j]; // Shift the larger element to the right
       j--;
     }
+
     // Insert the currentValue into its correct position
+    mainArray[j + 1] = currentValue;
+
+    // Capture the height update for the insertion position
     animations.push([j + 1, currentValue]); // Show where the current value is placed
-    mainArray[j + 1] = currentValue; // Place the current value in the array
+    animations.push([j + 1, -1]); // Reset color for the current value's position
   }
 }
 /**
@@ -191,8 +192,8 @@ export function mergeSortDispatcher(array: number[]): [number, number][] {
  * @returns animations array
  */
 export function insertionSortDispatcher(array: number[]): [number, number][] {
-  const animations: [number, number][] = []; // CREATE THE ANIMATION ARRAY
-  if (array.length <= 1) return array; // BASE CASE: The subarray is of length 1 or 0
+  const animations: [number, number][] = []; // Create the animation array
+  if (array.length <= 1) return array; // Base case: The array is of length 1 or 0
   const mainArray = [...array]; // Work on a copy of the array
   insertionSort(mainArray, animations); // Call insertionSort
   return animations; // Return the animation array

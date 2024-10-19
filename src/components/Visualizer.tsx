@@ -95,41 +95,29 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         });
     }
 
-    /**
- * Insertion Sort Visualization
- */
-insertionSort() {
-    // Get animations but work on a copy of the array to avoid pre-sorting the state
-    const animations = algorithms.insertionSortDispatcher([...this.state.array]);
-    const barHeights = [...this.state.barHeights];
-    const barColors = [...this.state.barColors];
-
-    animations.forEach((animation, i) => {
-        const isColorChange = i % 3 !== 2;
-        setTimeout(() => {
-            if (isColorChange) {
-                const [barOneIdx, barTwoIdx] = animation;
-                barColors[barOneIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-                barColors[barTwoIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
-            } else {
-                const [barOneIdx, newHeight] = animation;
-                barHeights[barOneIdx] = newHeight;
-            }
-            this.setState({ barHeights, barColors });
-        }, i * ANIMATION_SPEED_MS);
-    });
-
-    // Reset all bars to PRIMARY_COLOR after sorting
-    setTimeout(() => {
-        for (let i = 0; i < barColors.length; i++) {
+    insertionSort() {
+        const animations = algorithms.insertionSortDispatcher([...this.state.array]);
+        const barHeights = [...this.state.barHeights];
+        const barColors = [...this.state.barColors];
+    
+        animations.forEach((animation, i) => {
+            const [barIdx, newHeight] = animation;
+    
             setTimeout(() => {
-                barColors[i] = PRIMARY_COLOR;
-                this.setState({ barColors });
+                if (newHeight === -1) {
+                    // Reset color for the bar that is now in its sorted position
+                    barColors[barIdx] = PRIMARY_COLOR; // Reset to primary color
+                } else {
+                    // Update height for the bars that are being moved or compared
+                    barHeights[barIdx] = newHeight; // Set height to the new value
+                }
+    
+                // Update the state with the new heights and colors
+                this.setState({ barHeights, barColors });
             }, i * ANIMATION_SPEED_MS);
-        }
-    }, animations.length * ANIMATION_SPEED_MS);
-}
-
+        });
+    }
+    
     /**
      * Merge Sort Visualization
      */
@@ -220,7 +208,7 @@ insertionSort() {
                             key={idx}
                             initial={{ height: '0px' }}
                             animate={{ height: `${height}px` }}
-                            transition={{ type: 'spring', stiffness: 100 }}
+                            transition={{ ease: "linear", stiffness: 100 }}
                             style={{
                                 backgroundColor: barColors[idx], // Color controlled by state
                                 width: `${(100 / barHeights.length)}%`, // Ensure bars fit in the container
