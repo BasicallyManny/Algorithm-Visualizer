@@ -3,7 +3,7 @@ import * as algorithms from "../algorithms/sortingAlgorithms";
 import { motion } from 'framer-motion'; // Import framer-motion
 
 // Default Animation variables
-const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
+const ANIMATION_SPEED_MS = 50; // Adjusted for smoother animation
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 
@@ -96,27 +96,43 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     }
 
     insertionSort() {
-        const animations = algorithms.insertionSortDispatcher([...this.state.array]);
-        const barHeights = [...this.state.barHeights];
-        const barColors = [...this.state.barColors];
-    
-        animations.forEach((animation, i) => {
-            const [barIdx, newHeight] = animation;
-    
-            setTimeout(() => {
-                if (newHeight === -1) {
-                    // Reset color for the bar that is now in its sorted position
-                    barColors[barIdx] = PRIMARY_COLOR; // Reset to primary color
-                } else {
-                    // Update height for the bars that are being moved or compared
-                    barHeights[barIdx] = newHeight; // Set height to the new value
-                }
-    
-                // Update the state with the new heights and colors
-                this.setState({ barHeights, barColors });
-            }, i * ANIMATION_SPEED_MS);
-        });
-    }
+    const animations = algorithms.insertionSortDispatcher([...this.state.array]);
+    const barHeights = [...this.state.barHeights];
+    const barColors = [...this.state.barColors];
+
+    animations.forEach((animation, i) => {
+        const [barIdx, newHeight, action] = animation;
+
+        setTimeout(() => {
+            switch (action) {
+                case 'current':
+                    barColors[barIdx] = 'orange'; // Highlight current bar being processed
+                    break;
+                case 'compare':
+                    barColors[barIdx] = 'red'; // Bars being compared
+                    break;
+                case 'swap':
+                    barHeights[barIdx] = newHeight; // Swap the bars
+                    barColors[barIdx] = PRIMARY_COLOR; // Color swap
+                    break;
+                case 'insert':
+                    barHeights[barIdx] = newHeight; // Update height of inserted element
+                    barColors[barIdx] = 'blue'; // Color of insertion
+                    break;
+                case 'sorted':
+                    barColors[barIdx] = PRIMARY_COLOR; // Mark bar as sorted
+                    break;
+                case 'revert':
+                    barColors[barIdx] = SECONDARY_COLOR; // Revert to default color after comparison
+                    break;
+            }
+
+            // Update the state with the new heights and colors
+            this.setState({ barHeights, barColors });
+        }, i * ANIMATION_SPEED_MS);
+    });
+}
+
     
     /**
      * Merge Sort Visualization

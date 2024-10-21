@@ -1,6 +1,6 @@
 function insertionSort(
   mainArray: number[], // The original array that is being sorted.
-  animations: [number, number][] // An array of animations to store the comparisons performed during the sorting process.
+  animations: [number, number, string][] // An array of animations to store the comparisons performed during the sorting process.
 ) {
   const n = mainArray.length;
 
@@ -9,28 +9,27 @@ function insertionSort(
     let j = i - 1;
 
     // Highlight the current element being compared (key)
-    animations.push([i, -1]); // Highlight current element (key)
+    animations.push([i, -1, 'current']); // Highlight the current element (ORANGE)
 
     // Find the correct position for currentValue
     while (j >= 0 && mainArray[j] > currentValue) {
-      // Push animations for color change (highlighting bars being compared)
-      animations.push([j, j]); // Highlight bar j
-      animations.push([j, j]); // Reset color after comparison
+      // Highlight the bars being compared (RED)
+      animations.push([j, j + 1, 'compare']); // Compare current with previous
+      animations.push([j, j + 1, 'revert']); // Revert colors after comparison
 
-      // Push animation to move the larger element (without height change)
-      animations.push([j + 1, mainArray[j]]); // Move the larger element to the right
+      // Push animation to move the larger element (BLUE for swapping)
+      animations.push([j + 1, mainArray[j], 'swap']); // Move the larger element to the right
       mainArray[j + 1] = mainArray[j]; // Shift the larger element to the right
       j--;
     }
 
-    // Insert the currentValue into its correct position
+    // Insert the currentValue into its correct position (BLUE)
     mainArray[j + 1] = currentValue;
-
-    // Capture the height update for the insertion position
-    animations.push([j + 1, currentValue]); // Show where the current value is placed
-    animations.push([j + 1, -1]); // Reset color for the current value's position
+    animations.push([j + 1, currentValue, 'insert']); // Show insertion of current value
+    animations.push([j + 1, -1, 'sorted']); // Mark as sorted (GREEN)
   }
 }
+
 /**
  * Partition function for quick sort
  * @param array
