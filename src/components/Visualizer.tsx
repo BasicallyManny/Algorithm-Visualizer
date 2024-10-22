@@ -3,7 +3,7 @@ import * as algorithms from "../algorithms/sortingAlgorithms";
 import { motion } from 'framer-motion'; // Import framer-motion
 
 // Default Animation variables
-const ANIMATION_SPEED_MS = 50; // Adjusted for smoother animation
+const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 
@@ -80,60 +80,78 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         animations.forEach(([barIdx1, barIdx2, action], i) => {
             setTimeout(() => {
                 if (action === 'compare') {
-                    barColors[barIdx1] = "green";
-                    barColors[barIdx2] = "green";
+                    barColors[barIdx1] = SECONDARY_COLOR;   // Color for comparison (red)
+                    barColors[barIdx2] = SECONDARY_COLOR;   // Highlight pivot (red)
                 } else if (action === 'swap') {
+                    // Swap the heights
                     const tempHeight = barHeights[barIdx1];
                     barHeights[barIdx1] = barHeights[barIdx2];
                     barHeights[barIdx2] = tempHeight;
+
+                    // Change colors to green after swapping
+                    barColors[barIdx1] = "green"; // Swapped bar turns green
+                    barColors[barIdx2] = "green"; // Swapped bar turns green
                 } else if (action === 'revert') {
-                    barColors[barIdx1] = PRIMARY_COLOR;
-                    barColors[barIdx2] = PRIMARY_COLOR;
+                    barColors[barIdx1] = PRIMARY_COLOR;  // Revert to default color 
+                    barColors[barIdx2] = PRIMARY_COLOR;  // Revert to default color
                 }
+
+                this.setState({ barHeights, barColors });
+            }, i * ANIMATION_SPEED_MS);
+        });
+
+        // After sorting, reset all colors to cyan
+        setTimeout(() => {
+            for (let i = 0; i < barColors.length; i++) {
+                setTimeout(() => {
+                    barColors[i] = "cyan";
+                    this.setState({ barColors });
+                }, i * ANIMATION_SPEED_MS);
+            }
+        }, animations.length * ANIMATION_SPEED_MS);
+    }
+
+
+
+    insertionSort() {
+        const animations = algorithms.insertionSortDispatcher([...this.state.array]);
+        const barHeights = [...this.state.barHeights];
+        const barColors = [...this.state.barColors];
+
+        animations.forEach((animation, i) => {
+            const [barIdx, newHeight, action] = animation;
+
+            setTimeout(() => {
+                switch (action) {
+                    case 'current':
+                        barColors[barIdx] = 'orange'; // Highlight current bar being processed
+                        break;
+                    case 'compare':
+                        barColors[barIdx] = 'red'; // Bars being compared
+                        break;
+                    case 'swap':
+                        barHeights[barIdx] = newHeight; // Swap the bars
+                        barColors[barIdx] = PRIMARY_COLOR; // Color swap
+                        break;
+                    case 'insert':
+                        barHeights[barIdx] = newHeight; // Update height of inserted element
+                        barColors[barIdx] = 'blue'; // Color of insertion
+                        break;
+                    case 'sorted':
+                        barColors[barIdx] = PRIMARY_COLOR; // Mark bar as sorted
+                        break;
+                    case 'revert':
+                        barColors[barIdx] = SECONDARY_COLOR; // Revert to default color after comparison
+                        break;
+                }
+
+                // Update the state with the new heights and colors
                 this.setState({ barHeights, barColors });
             }, i * ANIMATION_SPEED_MS);
         });
     }
 
-    insertionSort() {
-    const animations = algorithms.insertionSortDispatcher([...this.state.array]);
-    const barHeights = [...this.state.barHeights];
-    const barColors = [...this.state.barColors];
 
-    animations.forEach((animation, i) => {
-        const [barIdx, newHeight, action] = animation;
-
-        setTimeout(() => {
-            switch (action) {
-                case 'current':
-                    barColors[barIdx] = 'orange'; // Highlight current bar being processed
-                    break;
-                case 'compare':
-                    barColors[barIdx] = 'red'; // Bars being compared
-                    break;
-                case 'swap':
-                    barHeights[barIdx] = newHeight; // Swap the bars
-                    barColors[barIdx] = PRIMARY_COLOR; // Color swap
-                    break;
-                case 'insert':
-                    barHeights[barIdx] = newHeight; // Update height of inserted element
-                    barColors[barIdx] = 'blue'; // Color of insertion
-                    break;
-                case 'sorted':
-                    barColors[barIdx] = PRIMARY_COLOR; // Mark bar as sorted
-                    break;
-                case 'revert':
-                    barColors[barIdx] = SECONDARY_COLOR; // Revert to default color after comparison
-                    break;
-            }
-
-            // Update the state with the new heights and colors
-            this.setState({ barHeights, barColors });
-        }, i * ANIMATION_SPEED_MS);
-    });
-}
-
-    
     /**
      * Merge Sort Visualization
      */
@@ -142,7 +160,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         const animations = algorithms.mergeSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
-    
+
         animations.forEach((animation, i) => {
             const isColorChange = i % 3 !== 2;
             setTimeout(() => {
@@ -157,7 +175,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 this.setState({ barHeights, barColors });
             }, i * ANIMATION_SPEED_MS);
         });
-    
+
         // Reset all bars to PRIMARY_COLOR after sorting
         setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
@@ -168,7 +186,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             }
         }, animations.length * ANIMATION_SPEED_MS);
     }
-    
+
 
     /**
      * Calls the appropriate function from when the right value is selected
