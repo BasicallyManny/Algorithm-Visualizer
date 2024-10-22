@@ -4,21 +4,16 @@ import { motion } from 'framer-motion'; // Import framer-motion
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-// Default Animation variables
-const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 
-// Define the types for props (if any are needed)
 interface VisualizerProps {
     ArraySize?: number; // Optional prop for setting the array size
-    AnimationSpeed: number;
+    AnimationSpeed?: number;
     setArraySize: (size: number) => void;       // Prop to update array size
     setAnimationSpeed: (speed: number) => void; // Prop to update animation speed
 }
 
-// Define the state types
 interface VisualizerState {
     array: number[];       // Represents the current array of heights for the bars
     selectedAlgorithm: string;
@@ -27,37 +22,43 @@ interface VisualizerState {
 }
 
 export default class Visualizer extends React.Component<VisualizerProps, VisualizerState> {
+    private timeouts: NodeJS.Timeout[] = []; // Store timeout IDs
+
     constructor(props: VisualizerProps) {
         super(props);
         this.state = {
             array: [],
             selectedAlgorithm: "NOTHING",
-            barHeights: [], // Initial heights (empty)
-            barColors: [] // Initial colors (empty)
+            barHeights: [],
+            barColors: [],
         };
     }
 
-    /**
-     * Called when the component is mounted
-     */
     componentDidMount(): void {
         this.resetArray();
     }
 
-    // Use componentDidUpdate to check if ArraySize has changed
     componentDidUpdate(prevProps: VisualizerProps): void {
         if (prevProps.ArraySize !== this.props.ArraySize) {
             this.resetArray();
         }
+
+        if (prevProps.AnimationSpeed !== this.props.AnimationSpeed) {
+            this.props.setAnimationSpeed(this.props.AnimationSpeed);
+        }
     }
 
-    /**
-     * Resets the array and sets initial heights and colors
-     */
+    resetTimeouts() {
+        // Clear all existing timeouts
+        this.timeouts.forEach(timeout => clearTimeout(timeout));
+        this.timeouts = [];
+    }
+
     resetArray(): void {
+        this.resetTimeouts(); // Clear previous timeouts
         const array: number[] = [];
         const size = this.props.ArraySize || 50;
-        const barColors: string[] = Array(size).fill(PRIMARY_COLOR); // Default all colors to PRIMARY_COLOR
+        const barColors: string[] = Array(size).fill(PRIMARY_COLOR);
 
         for (let i = 0; i < size; i++) {
             array.push(randomIntFromInterval(5, 730));
@@ -65,24 +66,18 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
 
         this.setState({
             array,
-            barHeights: array,  // Initialize barHeights as the array values
-            barColors,          // Initialize all bars to PRIMARY_COLOR
+            barHeights: array,
+            barColors,
         });
     }
 
-    /**THIS IS HORRIBLE BUT IM TOO LAZY AND I WANT TO SLEEP SO TO RESET THE ARRAY IM JUST GOING TO REFRESH THE PAGE ITS 3 AM */
     refreshPage(): void {
-        window.location.reload(); // Refresh the entire page
+        window.location.reload();
     }
 
-    /**
-     * Quick Sort Visualization
-     */
     quickSort = () => {
         const array = this.state.array.slice();
         const animations = algorithms.quickSortDispatcher(array);
-
-        // Handle animations through state
         this.visualizeQuickSort(animations);
     };
 
@@ -90,93 +85,97 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
 
+        this.resetTimeouts(); // Clear previous timeouts
+
         animations.forEach(([barIdx1, barIdx2, action], i) => {
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 if (action === 'compare') {
-                    barColors[barIdx1] = SECONDARY_COLOR;   // Color for comparison (red)
-                    barColors[barIdx2] = SECONDARY_COLOR;   // Highlight pivot (red)
+                    barColors[barIdx1] = SECONDARY_COLOR;
+                    barColors[barIdx2] = SECONDARY_COLOR;
                 } else if (action === 'swap') {
-                    // Swap the heights
                     const tempHeight = barHeights[barIdx1];
                     barHeights[barIdx1] = barHeights[barIdx2];
                     barHeights[barIdx2] = tempHeight;
 
-                    // Change colors to green after swapping
-                    barColors[barIdx1] = "green"; // Swapped bar turns green
-                    barColors[barIdx2] = "green"; // Swapped bar turns green
+                    barColors[barIdx1] = "green";
+                    barColors[barIdx2] = "green";
                 } else if (action === 'revert') {
-                    barColors[barIdx1] = PRIMARY_COLOR;  // Revert to default color 
-                    barColors[barIdx2] = PRIMARY_COLOR;  // Revert to default color
+                    barColors[barIdx1] = PRIMARY_COLOR;
+                    barColors[barIdx2] = PRIMARY_COLOR;
                 }
 
                 this.setState({ barHeights, barColors });
-            }, i * ANIMATION_SPEED_MS);
+            }, i * this.props.AnimationSpeed);
+
+            this.timeouts.push(timeout);
         });
 
         // After sorting, reset all colors to cyan
-        setTimeout(() => {
+        const resetTimeout = setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
-                setTimeout(() => {
+                const timeout = setTimeout(() => {
                     barColors[i] = "cyan";
                     this.setState({ barColors });
-                }, i * ANIMATION_SPEED_MS);
+                }, i * this.props.AnimationSpeed);
+
+                this.timeouts.push(timeout);
             }
-        }, animations.length * ANIMATION_SPEED_MS);
+        }, animations.length * this.props.AnimationSpeed);
+
+        this.timeouts.push(resetTimeout);
     }
-
-
 
     insertionSort() {
         const animations = algorithms.insertionSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
 
+        this.resetTimeouts(); // Clear previous timeouts
+
         animations.forEach((animation, i) => {
             const [barIdx, newHeight, action] = animation;
 
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 switch (action) {
                     case 'current':
-                        barColors[barIdx] = 'orange'; // Highlight current bar being processed
+                        barColors[barIdx] = 'orange';
                         break;
                     case 'compare':
-                        barColors[barIdx] = 'red'; // Bars being compared
+                        barColors[barIdx] = 'red';
                         break;
                     case 'swap':
-                        barHeights[barIdx] = newHeight; // Swap the bars
-                        barColors[barIdx] = PRIMARY_COLOR; // Color swap
+                        barHeights[barIdx] = newHeight;
+                        barColors[barIdx] = PRIMARY_COLOR;
                         break;
                     case 'insert':
-                        barHeights[barIdx] = newHeight; // Update height of inserted element
-                        barColors[barIdx] = 'blue'; // Color of insertion
+                        barHeights[barIdx] = newHeight;
+                        barColors[barIdx] = 'blue';
                         break;
                     case 'sorted':
-                        barColors[barIdx] = PRIMARY_COLOR; // Mark bar as sorted
+                        barColors[barIdx] = PRIMARY_COLOR;
                         break;
                     case 'revert':
-                        barColors[barIdx] = SECONDARY_COLOR; // Revert to default color after comparison
+                        barColors[barIdx] = SECONDARY_COLOR;
                         break;
                 }
 
-                // Update the state with the new heights and colors
                 this.setState({ barHeights, barColors });
-            }, i * ANIMATION_SPEED_MS);
+            }, i * this.props.AnimationSpeed);
+
+            this.timeouts.push(timeout);
         });
     }
 
-
-    /**
-     * Merge Sort Visualization
-     */
     mergeSort() {
-        // Get animations but work on a copy of the array to avoid pre-sorting the state
         const animations = algorithms.mergeSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
 
+        this.resetTimeouts(); // Clear previous timeouts
+
         animations.forEach((animation, i) => {
             const isColorChange = i % 3 !== 2;
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 if (isColorChange) {
                     const [barOneIdx, barTwoIdx] = animation;
                     barColors[barOneIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
@@ -186,39 +185,38 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     barHeights[barOneIdx] = newHeight;
                 }
                 this.setState({ barHeights, barColors });
-            }, i * ANIMATION_SPEED_MS);
+            }, i * this.props.AnimationSpeed);
+
+            this.timeouts.push(timeout);
         });
 
-        // Reset all bars to PRIMARY_COLOR after sorting
         setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
-                setTimeout(() => {
+                const timeout = setTimeout(() => {
                     barColors[i] = PRIMARY_COLOR;
                     this.setState({ barColors });
-                }, i * ANIMATION_SPEED_MS);
+                }, i * this.props.AnimationSpeed);
+
+                this.timeouts.push(timeout);
             }
-        }, animations.length * ANIMATION_SPEED_MS);
+        }, animations.length * this.props.AnimationSpeed);
     }
 
-
-    /**
-     * Calls the appropriate function from when the right value is selected
-     */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
-        if(selectedAlgorithm === "NOTHING"){
+        if (selectedAlgorithm === "NOTHING") {
             this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
         }
         else if (selectedAlgorithm === "insertionSort") {
-           this.insertionSort();
-        }else if (selectedAlgorithm === "mergeSort") {
+            this.insertionSort();
+        } else if (selectedAlgorithm === "mergeSort") {
             this.mergeSort();
-        }else if (selectedAlgorithm === "quickSort") {
+        } else if (selectedAlgorithm === "quickSort") {
             this.quickSort();
         }
     }
 
-    notifyUser = (message, type) => {
+    notifyUser = (message: string, type: string) => {
         if (type === 'success') {
             toast.success(message);
         } else if (type === 'error') {
@@ -226,137 +224,85 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
     };
 
-    /**
-     * Checks if the array is sorted in ascending order
-     */
-    verifySorted(array: number[]): boolean {
-        for (let i = 0; i < array.length - 1; i++) {
-            if (array[i] > array[i + 1]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 
-     * @returns 
-     */
     render(): JSX.Element {
-        const { barHeights, barColors } = this.state;
+        const { barHeights, barColors, selectedAlgorithm } = this.state;
 
         return (
-            //UI ELEMENTS
-            <div id="visualizer-container" className="flex justify-center flex-col items-center !mt-8 !mb-8 ">
-                <div
-                    id="visualizer-wrapper"
-                    className="flex justify-center items-end !mt-4"
-                    style={{
-                        height: '80vh',
-                        width: '80vw',
-                        maxWidth: '1200px', // Set a max width to avoid over-expanding the container
-                    }}
-                >
-                    {/* RENDERING ARRAY BARS */}
-                    {barHeights.map((height, idx) => (
-                        <motion.div
-                            className="array-bar border-2 border-black"
-                            key={idx}
-                            initial={{ height: '0px' }}
-                            animate={{ height: `${height}px` }}
-                            transition={{ ease: "linear", stiffness: 100 }}
-                            style={{
-                                backgroundColor: barColors[idx], // Color controlled by state
-                                width: `min(100% / ${barHeights.length}, 15px)`, // Set a minimum width for bars
-                            }}
-                        />
-                    ))}
-                </div>
-                <div id="array-size-selecors">
-                    {/* Slider for adjusting array size */}
-                    <div id="sizeSlider" className="flex flex-col items-center text-white m-4">
-                        <label className="text-sm font-bold text-white">Array Size: {this.props.ArraySize}</label>
-                        <input
-                            type="range"
-                            min="10"
-                            max="50"
-                            value={this.props.ArraySize}
-                            onChange={(e) => this.props.setArraySize(Number(e.target.value))}
-                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
-                            style={{
-                                background: 'linear-gradient(to right, #6b46c1, #b794f4)', // Gradient purple for track
-                            }}
-                        />
-                    </div>
-                    {/* Slider for adjusting animation speed */}
-                    <div className="flex flex-col items-center text-white m-4">
-                        <label className="text-sm font-bold">Speed: {this.props.AnimationSpeed}ms</label>
-                        <input
-                            type="range"
-                            min="5"
-                            max="100"
-                            value={this.props.AnimationSpeed}
-                            onChange={(e) => this.props.setAnimationSpeed(Number(e.target.value))}
-                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
-                            style={{
-                                background: 'linear-gradient(to right, #6b46c1, #b794f4)', // Gradient purple for track
-                            }}
-                        />
-                    </div>
-                </div>
 
-                <div className="flex flex-col items-center mt-8 w-full space-y-2">
+            <div id="visualizer-container" className="flex justify-center flex-col items-center !pt-8 !pb-8 ">
+                {/* Algorithm selection dropdown */}
+                <div className="mb-4">
+                    <label className="text-white font-bold mr-2">Select Algorithm:</label>
                     <select
-                        //Upon selection the State of the selectedAlgorithm is updated
+                        value={selectedAlgorithm}
                         onChange={(e) => this.setState({ selectedAlgorithm: e.target.value })}
-                        className="bg-purple-700 text-white font-bold rounded mb-2 sm:mb-0 sm:mr-2 w-3/4 sm:w-1/4 text-center"
-                        style={{
-                            height: '50px',
-                        }}
+                        className="bg-gray-800 text-white border border-gray-600 p-2 rounded"
                     >
                         <option value="NOTHING">Select Sorting Algorithm</option>
                         <option value="insertionSort">Insertion Sort</option>
                         <option value="mergeSort">Merge Sort</option>
                         <option value="quickSort">Quick Sort</option>
                     </select>
-                    <div id="Sorting_Buttons-Container" className="flex flex-cols space-x-4 sm:flex-row justify-center items-center w-full ">
-                        <button
-                            className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
-                            onClick={() => this.refreshPage()}
+                </div>
+                <div
+                    id="visualizer-wrapper"
+                    className="flex justify-center items-end !mt-4"
+                    style={{
+                        height: '60vh',
+                        width: '80vw',
+                        maxWidth: '1200px',
+                    }}
+                >
+                    {barHeights.map((height, idx) => (
+                        <motion.div
+                            className="array-bar border-2 border-black"
+                            key={idx}
+                            initial={{ height: '0px' }}
+                            animate={{ height: `${height / 1.7}px` }}
+                            transition={{ ease: "linear", stiffness: 100 }}
                             style={{
-                                height: '50px',
+                                backgroundColor: barColors[idx],
+                                width: `min(100% / ${barHeights.length}, 15px)`,
                             }}
-                        >
-                            Reset
-                        </button>
-                        <button
-                            className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
-                            onClick={() => this.handleSort()}
-                            disabled={!this.state.selectedAlgorithm}
-                            style={{
-                                height: '50px',
-                            }}
-                        >
-                            Sort
-                        </button>
+                        />
+                    ))}
+                </div>
+                <div id="array-size-selectors">
+                    <div id="sizeSlider" className="flex flex-col items-center text-white m-4">
+                        <label className="text-sm font-bold text-white">Array Size: {this.props.ArraySize}</label>
+                        <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={this.props.ArraySize}
+                            onChange={(e) => this.props.setArraySize(Number(e.target.value))}
+                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                        />
+                    </div>
+                    <div id="speedSlider" className="flex flex-col items-center text-white m-4">
+                        <label className="text-sm font-bold text-white">Animation Speed: {this.props.AnimationSpeed} ms</label>
+                        <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={this.props.AnimationSpeed}
+                            onChange={(e) => this.props.setAnimationSpeed(Number(e.target.value))}
+                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                        />
                     </div>
                 </div>
-                {/* Toast Notification Container */}
-                <ToastContainer
-                    position="top-right"
-                    autoClose={3000}
-                    hideProgressBar={false}
-                    closeOnClick
-                    pauseOnHover
-                    draggable
-                    theme="colored"
-                />
+                <div id="buttons" className="flex flex-row space-x-4">
+                    <button onClick={() => this.handleSort()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sort</button>
+                    <button onClick={() => this.resetArray()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Reset Array</button>
+                    <button onClick={() => this.refreshPage()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reload</button>
+                </div>
+                <ToastContainer />
             </div>
         );
     }
 }
 
-// Function to generate a random integer between min and maxs
-function randomIntFromInterval(min: number, max: number): number {
+// Helper function to generate a random integer in a range
+function randomIntFromInterval(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
-} 
+}

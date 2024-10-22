@@ -10,7 +10,7 @@ function App() {
     return (
         <div>
             <Navbar />
-            <div className="fixed bottom-14 left-0 right-0 mx-auto bg-black">
+            <div className= "bg-black mb-3">
                 <Visualizer
                     ArraySize={arraySize}
                     AnimationSpeed={animationSpeed}
