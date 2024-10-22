@@ -4,3 +4,36 @@
 .Toastify__toast-container {
     z-index: 9999; /* Ensure it's above other elements */
 }
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #7e22ce;
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #7e22ce;
+    cursor: pointer;
+  }
+  
+  input[type="range"]::-ms-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #7e22ce;
+    cursor: pointer;
+  }
+
+  .array-bar {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box; 
+  }
+  

@@ -1,6 +1,9 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
 import { motion } from 'framer-motion'; // Import framer-motion
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // Default Animation variables
 const ANIMATION_SPEED_MS = 20; // Adjusted for smoother animation
@@ -10,6 +13,9 @@ const SECONDARY_COLOR = 'red';
 // Define the types for props (if any are needed)
 interface VisualizerProps {
     ArraySize?: number; // Optional prop for setting the array size
+    AnimationSpeed: number;
+    setArraySize: (size: number) => void;       // Prop to update array size
+    setAnimationSpeed: (speed: number) => void; // Prop to update animation speed
 }
 
 // Define the state types
@@ -25,7 +31,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         super(props);
         this.state = {
             array: [],
-            selectedAlgorithm: "",
+            selectedAlgorithm: "NOTHING",
             barHeights: [], // Initial heights (empty)
             barColors: [] // Initial colors (empty)
         };
@@ -36,6 +42,13 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
      */
     componentDidMount(): void {
         this.resetArray();
+    }
+
+    // Use componentDidUpdate to check if ArraySize has changed
+    componentDidUpdate(prevProps: VisualizerProps): void {
+        if (prevProps.ArraySize !== this.props.ArraySize) {
+            this.resetArray();
+        }
     }
 
     /**
@@ -193,17 +206,25 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
      */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
-        if (selectedAlgorithm === "insertionSort") {
-            this.insertionSort();
-        } else if (selectedAlgorithm === "mergeSort") {
+        if(selectedAlgorithm === "NOTHING"){
+            this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
+        }
+        else if (selectedAlgorithm === "insertionSort") {
+           this.insertionSort();
+        }else if (selectedAlgorithm === "mergeSort") {
             this.mergeSort();
-        } else if (selectedAlgorithm === "quickSort") {
+        }else if (selectedAlgorithm === "quickSort") {
             this.quickSort();
         }
-        else if (selectedAlgorithm === "NOTHING") {
-            alert("Please select a sorting algorithm before sorting.");
-        }
     }
+
+    notifyUser = (message, type) => {
+        if (type === 'success') {
+            toast.success(message);
+        } else if (type === 'error') {
+            toast.error(message);
+        }
+    };
 
     /**
      * Checks if the array is sorted in ascending order
@@ -226,13 +247,14 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
 
         return (
             //UI ELEMENTS
-            <div id="visualizer-container" className="flex justify-center flex-col items-center h-screen !mt-8">
+            <div id="visualizer-container" className="flex justify-center flex-col items-center !mt-8 !mb-8 ">
                 <div
                     id="visualizer-wrapper"
                     className="flex justify-center items-end !mt-4"
                     style={{
                         height: '80vh',
                         width: '80vw',
+                        maxWidth: '1200px', // Set a max width to avoid over-expanding the container
                     }}
                 >
                     {/* RENDERING ARRAY BARS */}
@@ -245,13 +267,44 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             transition={{ ease: "linear", stiffness: 100 }}
                             style={{
                                 backgroundColor: barColors[idx], // Color controlled by state
-                                width: `${(100 / barHeights.length)}%`, // Ensure bars fit in the container
+                                width: `min(100% / ${barHeights.length}, 15px)`, // Set a minimum width for bars
                             }}
                         />
                     ))}
                 </div>
+                <div id="array-size-selecors">
+                    {/* Slider for adjusting array size */}
+                    <div id="sizeSlider" className="flex flex-col items-center text-white m-4">
+                        <label className="text-sm font-bold text-white">Array Size: {this.props.ArraySize}</label>
+                        <input
+                            type="range"
+                            min="10"
+                            max="50"
+                            value={this.props.ArraySize}
+                            onChange={(e) => this.props.setArraySize(Number(e.target.value))}
+                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                            style={{
+                                background: 'linear-gradient(to right, #6b46c1, #b794f4)', // Gradient purple for track
+                            }}
+                        />
+                    </div>
+                    {/* Slider for adjusting animation speed */}
+                    <div className="flex flex-col items-center text-white m-4">
+                        <label className="text-sm font-bold">Speed: {this.props.AnimationSpeed}ms</label>
+                        <input
+                            type="range"
+                            min="5"
+                            max="100"
+                            value={this.props.AnimationSpeed}
+                            onChange={(e) => this.props.setAnimationSpeed(Number(e.target.value))}
+                            className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                            style={{
+                                background: 'linear-gradient(to right, #6b46c1, #b794f4)', // Gradient purple for track
+                            }}
+                        />
+                    </div>
+                </div>
 
-                {/* UI ELEMENTS */}
                 <div className="flex flex-col items-center mt-8 w-full space-y-2">
                     <select
                         //Upon selection the State of the selectedAlgorithm is updated
@@ -266,7 +319,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         <option value="mergeSort">Merge Sort</option>
                         <option value="quickSort">Quick Sort</option>
                     </select>
-                    <div id="Sorting_Buttons-Container" className="flex flex-cols space-x-4 sm:flex-row justify-center items-center w-full">
+                    <div id="Sorting_Buttons-Container" className="flex flex-cols space-x-4 sm:flex-row justify-center items-center w-full ">
                         <button
                             className="bg-purple-700 hover:bg-purple-800 text-white font-bold rounded mb-2 sm:mb-0 w-3/4 sm:w-1/4 text-center"
                             onClick={() => this.refreshPage()}
@@ -288,12 +341,22 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         </button>
                     </div>
                 </div>
+                {/* Toast Notification Container */}
+                <ToastContainer
+                    position="top-right"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    closeOnClick
+                    pauseOnHover
+                    draggable
+                    theme="colored"
+                />
             </div>
         );
     }
 }
 
-// Function to generate a random integer between min and max
+// Function to generate a random integer between min and maxs
 function randomIntFromInterval(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
+} 
