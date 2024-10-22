@@ -9,24 +9,24 @@ function insertionSort(
     let j = i - 1;
 
     // Highlight the current element being compared (key)
-    animations.push([i, -1, 'current']); // Highlight the current element (ORANGE)
+    animations.push([i, -1, "current"]); // Highlight the current element (ORANGE)
 
     // Find the correct position for currentValue
     while (j >= 0 && mainArray[j] > currentValue) {
       // Highlight the bars being compared (RED)
-      animations.push([j, j + 1, 'compare']); // Compare current with previous
-      animations.push([j, j + 1, 'revert']); // Revert colors after comparison
+      animations.push([j, j + 1, "compare"]); // Compare current with previous
+      animations.push([j, j + 1, "revert"]); // Revert colors after comparison
 
       // Push animation to move the larger element (BLUE for swapping)
-      animations.push([j + 1, mainArray[j], 'swap']); // Move the larger element to the right
+      animations.push([j + 1, mainArray[j], "swap"]); // Move the larger element to the right
       mainArray[j + 1] = mainArray[j]; // Shift the larger element to the right
       j--;
     }
 
     // Insert the currentValue into its correct position (BLUE)
     mainArray[j + 1] = currentValue;
-    animations.push([j + 1, currentValue, 'insert']); // Show insertion of current value
-    animations.push([j + 1, -1, 'sorted']); // Mark as sorted (GREEN)
+    animations.push([j + 1, currentValue, "insert"]); // Show insertion of current value
+    animations.push([j + 1, -1, "sorted"]); // Mark as sorted (GREEN)
   }
 }
 
@@ -41,24 +41,24 @@ function partition(
   array: number[],
   low: number,
   high: number,
-  animations: [number, number, string][]
+  animations: [number, number, string][] // [index1, index2, "action"]
 ) {
   const pivot = array[high];
   let i = low - 1;
 
   for (let j = low; j < high; j++) {
-    animations.push([j, high, "compare"]); // Highlight current bar and pivot
+    animations.push([j, high, "compare"]); // Compare the current element with the pivot (red)
     if (array[j] <= pivot) {
       i++;
-      [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-      animations.push([i, j, "swap"]); // Animation for swap
+      [array[i], array[j]] = [array[j], array[i]]; // Swap
+      animations.push([i, j, "swap"]); // Animation for the swap (green)
     }
-    animations.push([j, high, "revert"]); // Revert the color for current element
+    animations.push([j, high, "revert"]); // Revert color to cyan after comparison
   }
 
-  // Swap pivot to the correct position
+  // Swap the pivot to its correct position
   [array[i + 1], array[high]] = [array[high], array[i + 1]];
-  animations.push([i + 1, high, "swap"]); // Animation for pivot swap
+  animations.push([i + 1, high, "swap"]); // Animation for the final swap with pivot (green)
   return i + 1;
 }
 
@@ -66,7 +66,7 @@ function quickSort(
   array: number[],
   low: number,
   high: number,
-  animations: [number, number, string][]
+  animations: [number, number, string][] // [index1, index2, "action"]
 ) {
   if (low < high) {
     const pivotIndex = partition(array, low, high, animations);
@@ -198,12 +198,8 @@ export function insertionSortDispatcher(array: number[]): [number, number][] {
   return animations; // Return the animation array
 }
 
-// Main function to call quicksort and get animations for visualization
-export function quickSortDispatcher(
-  array: number[]
-): [number, number, string][] {
+export function quickSortDispatcher(array: number[]): [number, number, string][] {
   const animations: [number, number, string][] = [];
   quickSort(array, 0, array.length - 1, animations);
-
   return animations;
 }
