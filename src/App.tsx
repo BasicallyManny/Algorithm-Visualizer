@@ -4,16 +4,7 @@ import './App.css';
 import Visualizer from './components/Visualizer';
 import Navbar from './components/Navbar';
 import SearchVisualizer from './components/SearchVisualizer';
-
-// Simple About component going to implement a full page soon
-const About: React.FC = () => {
-  return (
-    <div className="bg-black text-white p-4">
-      <h1 className="text-3xl font-bold">About</h1>
-      <p className="mt-4">This is a sorting visualizer application built with React and TypeScript.</p>
-    </div>
-  );
-};
+import About from './components/About';
 
 const App: React.FC = () => {
   const [arraySize, setArraySize] = useState(50);  // State for array size

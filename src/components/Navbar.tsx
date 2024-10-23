@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex-shrink-0 flex items-center">
-                        <Link to="/" className="text-2xl font-bold text-white">
+                        <Link to="/about" className="text-2xl font-bold text-white">
                             <MdAccountTree size={45}/>
                         </Link>
                     </div>
