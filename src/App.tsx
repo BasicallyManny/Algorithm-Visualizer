@@ -14,6 +14,7 @@ const App: React.FC = () => {
     <div>
       <Navbar />
       <Routes>
+      <Route path="/" element={<About />} />
         <Route path="/visualizer" element={
           <div className="bg-black mb-3">
             <Visualizer

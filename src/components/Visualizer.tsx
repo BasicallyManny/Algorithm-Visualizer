@@ -75,7 +75,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         window.location.reload();
     }
 
-    quickSort = () => {
+    quickSortVisualizer = () => {
         const array = this.state.array.slice();
         const animations = algorithms.quickSortDispatcher(array);
         this.visualizeQuickSort(animations);
@@ -125,7 +125,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         this.timeouts.push(resetTimeout);
     }
 
-    insertionSort() {
+    insertionSortVisualizer() {
         const animations = algorithms.insertionSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
@@ -166,7 +166,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         });
     }
 
-    mergeSort() {
+    mergeSortVisualizer() {
         const animations = algorithms.mergeSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
@@ -203,16 +203,17 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     }
 
     handleSort(): void {
+        this.resetArray()
         const { selectedAlgorithm } = this.state;
         if (selectedAlgorithm === "NOTHING") {
             this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
         }
         else if (selectedAlgorithm === "insertionSort") {
-            this.insertionSort();
+            this.insertionSortVisualizer();
         } else if (selectedAlgorithm === "mergeSort") {
-            this.mergeSort();
+            this.mergeSortVisualizer();
         } else if (selectedAlgorithm === "quickSort") {
-            this.quickSort();
+            this.quickSortVisualizer();
         }
     }
 
@@ -273,7 +274,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         <input
                             type="range"
                             min="10"
-                            max="100"
+                            max="50"
                             value={this.props.ArraySize}
                             onChange={(e) => this.props.setArraySize(Number(e.target.value))}
                             className="w-full appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
