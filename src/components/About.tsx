@@ -111,8 +111,10 @@ const About: React.FC = () => {
                         This project is a sorting algorithm visualizer built in React using TypeScript.
                     </span>
                     <span className="block mb-2">
-                        It includes information about each individual algorithm and implementations in different programming languages,
-                        as well as search algorithms.
+                        It includes information about each individual algorithm and implementations in different programming languages.
+                    </span>
+                    <span className="block mb-2">
+                        Allowing users to visualize how different sorting algorithms work in real time, provides an interactive way to understand the mechanics of sorting.
                     </span>
                     <span className="block mb-2">
                         I want to keep this project open source, so I welcome you to contribute!
