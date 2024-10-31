@@ -143,7 +143,7 @@ const About: React.FC = () => {
                 </div>
                 <div className="flex space-x-4">
                     <a
-                        href="https://github.com/BasicallyManny/Algorithm-Visualizer"
+                        href="https://mannyfong.vercel.app/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center mb-20 min-h-14 min-w-44 bg-purple-800 hover:bg-purple-500 text-white font-bold py-3 px-5 rounded-lg shadow-md transition duration-200 transform hover:scale-105"
