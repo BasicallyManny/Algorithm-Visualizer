@@ -1,50 +1,55 @@
-# React + TypeScript + Vite
+# Sorting Algorithm Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a sorting algorithm visualizer built using React, TypeScript, and Tailwind CSS. It allows users to visualize how different sorting algorithms work in real time, providing an interactive way to understand the mechanics of sorting.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multiple Sorting Algorithms:** Visualizes algorithms such as Merge Sort, Insertion Sort, and Quick Sort.
+- **Interactive Visualization:** See the sorting process in action with animated bar heights representing values.
+- **Customizable Array Size:** Adjust the array size to see how different algorithms handle varying input sizes.
+- **Responsive Design:** The mobile-friendly app ensures a smooth experience on different devices.
+- **Color Coding:** Uses color-coded bars to represent the sorting process:
+  - **Cyan:** Default color for all bars.
+  - **Green:** Highlighting the current element being processed.
+  - **Red:** Highlighting comparisons between elements.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **React:** For building user interfaces.
+- **TypeScript:** This is for type safety and better development experience.
+- **Tailwind CSS:** For styling and responsive design.
 
-- Configure the top-level `parserOptions` property like this:
+## Installation
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/sorting-visualizer.git
+   cd sorting-visualizer
+   ```
+2. Install Dependencies:
+    ```bash
+    npm install
+    ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+## Usage
+1. Use the UI to select the sorting algorithm you wish to visualize.
+2. Adjust the array size and hit the "Sort" button to see the animation of the selected algorithm.
+3. Watch the bars change color as the sorting process progresses.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Contributing
+1. Fork the Repository
+2. Create your branch:
+   ```bash
+   git checkout -b feature/MyFeature
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m 'this is what I added'
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/MyFeature
+5. Open a pull request
