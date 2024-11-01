@@ -11,7 +11,7 @@ const App: React.FC = () => {
   const [animationSpeed, setAnimationSpeed] = useState(20); // State for animation speed
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       {/* Sticky Navbar */}
       <div className="sticky top-0 z-20 bg-gray-800 text-white shadow-md">
         <Navbar />

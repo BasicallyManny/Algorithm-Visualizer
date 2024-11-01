@@ -95,7 +95,7 @@ const About: React.FC = () => {
     );
 
     return (
-        <div id="aboutContainer" className="relative w-full h-screen bg-black text-white">
+        <div id="aboutContainer" className="relative w-full h-screen bg-black text-white pt-96 mt-6">
             {/* Particles background */}
             <Particles
                 id="tsparticles"
