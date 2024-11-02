@@ -4,6 +4,10 @@ import { motion } from 'framer-motion'; // Import framer-motion
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import InsertionSortInfo from "./informationComponents/InsertionSortInfo";
+import MergeSortInfo from "./informationComponents/MergeSortInfo";
+import QuickSortInfo from "./informationComponents/QuickSortInfo";
+
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 
@@ -202,6 +206,9 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }, animations.length * this.props.AnimationSpeed);
     }
 
+    /**
+     * Initiate sorting and collection of animation steps   
+     */
     handleSort(): void {
         this.resetArray()
         const { selectedAlgorithm } = this.state;
@@ -214,6 +221,26 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             this.mergeSortVisualizer();
         } else if (selectedAlgorithm === "quickSort") {
             this.quickSortVisualizer();
+        }
+    }
+
+    /**
+     * Render selected algorithm information
+     */
+    renderSelectedAlgorithmInfo = () => {
+        const { selectedAlgorithm } = this.state;
+        switch (selectedAlgorithm) {
+            case "insertionSort":
+                console.log("Insertion Sort Info Selected");
+                return <InsertionSortInfo key="insertionSort"/>;
+            case "mergeSort":
+                console.log("Merge Sort Info Selected");
+                return <MergeSortInfo key="mergeSort"/>; 
+            case "quickSort":
+                console.log("Quick Sort Info Selected");
+                return <QuickSortInfo key="quickSort"/>;
+            default:
+                return <div>Please select an algorithm to view information.</div>;
         }
     }
 
@@ -230,7 +257,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
 
         return (
 
-            <div id="visualizer-container" className="flex justify-center flex-col items-center !pt-8 !pb-8 ">
+            <div id="visualizer-container" className="relative flex flex-col items-center pt-20 mt-10 pb-8 h-screen overflow-y-auto">
                 {/* Algorithm selection dropdown */}
                 <div className="mb-4">
                     <label className="text-white font-bold mr-2">Select Algorithm:</label>
@@ -297,7 +324,12 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     <button onClick={() => this.resetArray()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Reset Array</button>
                     <button onClick={() => this.refreshPage()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reload</button>
                 </div>
+                {/* Toast container for notifications */}
                 <ToastContainer />
+                {/* Display selected algorithm information */}
+                <div className="bg-gray-700 text-white p-4 rounded mb-4 mt-10">
+                    {this.renderSelectedAlgorithmInfo()}
+                </div>
             </div>
         );
     }

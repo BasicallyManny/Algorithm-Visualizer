@@ -123,7 +123,7 @@ const About: React.FC = () => {
                     <span className="block mb-2">
                         Please feel free to share any details or specific requests.
                         Any feedback is greatly appreciated!
-                    </span>
+                    </span>w
                     <br></br>
                     <span className="font-bold text-xl !mt-6">Thank you for visiting!</span>
                 </p>
