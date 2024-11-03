@@ -1,0 +1,16 @@
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        // The key to be inserted
+        int key = arr[i]; // track the current element
+        int j = i - 1; // track the previous element
+
+        // Shift elements of the array, greater than the key, to the right
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+
+        // Place the key at its correct position
+        arr[j + 1] = key;
+    }
+}

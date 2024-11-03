@@ -1,0 +1,19 @@
+function insertionSort(array) {
+    for (let i = 1; i < array.length; i++) {
+        // The key to be inserted
+        let key = array[i]; // track the current element
+        let j = i - 1; // track the previous element
+
+        // Shift elements of the array, greater than the key, to the right
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j--;
+        }
+
+        // Place the key at its correct position
+        array[j + 1] = key;
+    }
+    return array;
+}
+
+console.log("Final sorted array:", insertionSort(array));
