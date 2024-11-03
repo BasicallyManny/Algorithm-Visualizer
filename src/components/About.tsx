@@ -95,7 +95,7 @@ const About: React.FC = () => {
     );
 
     return (
-        <div id="aboutContainer" className="relative w-full h-screen bg-black text-white pt-96 mt-6">
+        <div id="aboutContainer" className="relative w-full h-screen bg-black text-white pt-56 mt-6">
             {/* Particles background */}
             <Particles
                 id="tsparticles"
@@ -105,8 +105,8 @@ const About: React.FC = () => {
             />
 
             {/* About content */}
-            <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 rounded-lg shadow-lg">
-                <p className="text-center text-white text-xl p-4 rounded-lg shadow-md">
+            <div className="relative z-10 flex flex-col items-center p-4 rounded-lg shadow-lg fit--content  text-center">
+                <p className=" text-white text-xl p-4 rounded-lg shadow-md">
                     <span className="block mb-2">
                         This project is a sorting algorithm visualizer built in React using TypeScript.
                     </span>
@@ -123,7 +123,7 @@ const About: React.FC = () => {
                     <span className="block mb-2">
                         Please feel free to share any details or specific requests.
                         Any feedback is greatly appreciated!
-                    </span>w
+                    </span>
                     <br></br>
                     <span className="font-bold text-xl !mt-6">Thank you for visiting!</span>
                 </p>

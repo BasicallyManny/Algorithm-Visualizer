@@ -240,7 +240,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 console.log("Quick Sort Info Selected");
                 return <QuickSortInfo key="quickSort"/>;
             default:
-                return <div>Please select an algorithm to view information.</div>;
+                return <div className="flex align-middle justify-center text-3xl font-bold mb-4">Please select an algorithm to view information.</div>;
         }
     }
 
