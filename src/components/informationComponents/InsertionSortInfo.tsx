@@ -1,61 +1,118 @@
 import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { FaCopy } from "react-icons/fa";
+
 
 const InsertionSortInfo: React.FC = () => {
     const [selectedLanguage, setSelectedLanguage] = useState<string>('JavaScript');
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
+    const [copySuccess, setCopySuccess] = useState("");
 
     const toggleSection = (section: string) => {
         setExpandedSection(expandedSection === section ? null : section);
     };
 
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(codeSnippets[selectedLanguage]);
+            setCopySuccess("Copied!");
+            setTimeout(() => setCopySuccess(""), 2000);
+        } catch {
+            setCopySuccess("Failed to copy");
+            setTimeout(() => setCopySuccess(""), 2000);
+        }
+    };
+
     const codeSnippets: Record<string, string> = {
-        JavaScript: `function insertionSort(arr) {
-    for (let i = 1; i < arr.length; i++) {
-        let key = arr[i];
-        let j = i - 1;
+        JavaScript: `function insertionSort(array) {
+    for (let i = 1; i < array.length; i++) {
+        // The key to be inserted
+        let key = array[i]; // track the current element
+        let j = i - 1; // track the previous element
+
+        // Shift elements of the array, greater than the key, to the right
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j--;
+        }
+
+        // Place the key at its correct position
+        array[j + 1] = key;
+    }
+    return array;
+}
+
+console.log("Final sorted array:", insertionSort(array));
+`,
+
+        Python: `def insertion_sort(arr):
+    for i in range(1,len(array)):
+        # The key to be inserted
+        key=array[i] #track the current element
+        j=i-1 #track the previousdl element
+
+        # Shift elements of the array, greater than the key, to the right
+        while j>=0 and array[j]>key:
+            array[j+1]=array[j]
+            j=j-1
+
+        # Place the key at its correct position
+        array[j+1]=key  
+
+    return array 
+
+print("final sorted array: ", insertionSort(array))`,
+
+        C: `void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        // The key to be inserted
+        int key = arr[i]; // track the current element
+        int j = i - 1; // track the previous element
+
+        // Shift elements of the array, greater than the key, to the right
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j--;
         }
+
+        // Place the key at its correct position
         arr[j + 1] = key;
     }
-    return arr;
 }`,
-        Python: `def insertion_sort(arr):
-    for i in range(1, len(arr)):
-        key = arr[i]
-        j = i - 1
-        while j >= 0 and arr[j] > key:
-            arr[j + 1] = arr[j]
-            j -= 1
-        arr[j + 1] = key
-    return arr`,
-        C: `void insertionSort(int arr[], int n) {
-    int i, key, j;
-    for (i = 1; i < n; i++) {
-        key = arr[i];
-        j = i - 1;
-        while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
+
+        Java: `public static int[] insertionSort(int[] array) {
+        for (int i = 1; i < array.length; i++) {
+            // The key to be inserted
+            int key = array[i]; // track the current element
+            int j = i - 1; // track the previous element
+
+            // Shift elements of the array, greater than the key, to the right
+            while (j >= 0 && array[j] > key) {
+                array[j + 1] = array[j];
+                j--;
+            }
+
+            // Place the key at its correct position
+            array[j + 1] = key;
         }
-        arr[j + 1] = key;
+        return array;
     }
-}`
+        `
+
     };
 
     return (
         <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
             {/* Information Section */}
-            <div className="lg:w-3/5 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
+            <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
                 <h1 className="text-3xl font-bold text-teal-400 mb-4">Insertion Sort</h1>
                 <p className="text-lg leading-relaxed">
                     Insertion sort is a simple sorting algorithm that iterates through the elements of an unsorted list
                     and inserts each element into the correct position in the sorted list. <br />
+                    <br />
                     Like sorting cards in your hands, you take one card at a time and insert it into its sorted position.
-                    Insertion sort is an unstable sorting algorithm, which means it can produce <br />
+                    Insertion sort is an unstable sorting algorithm, which means it can produce
                     a different output than other sorting algorithms. The worst-case performance is O(n²), while the best-case performance is O(n).
                 </p>
 
@@ -85,7 +142,7 @@ const InsertionSortInfo: React.FC = () => {
             </div>
 
             {/* Code Snippet Section */}
-            <div className="lg:w-2/5 bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4 transition-all">
+            <div className="lg:w-2/4 bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4 transition-all">
                 <h3 className="text-2xl font-semibold text-teal-400 mb-4">Insertion Sort Code</h3>
                 {/* Language Selector */}
                 <select
@@ -101,9 +158,20 @@ const InsertionSortInfo: React.FC = () => {
                 </select>
 
                 {/* Code Display with Syntax Highlighting */}
-                <SyntaxHighlighter language={selectedLanguage.toLowerCase()} style={dracula} className="rounded-lg">
-                    {codeSnippets[selectedLanguage]}
-                </SyntaxHighlighter>
+                <div className="relative mb-6 p-4 bg-gray-800 rounded-lg shadow-lg">
+                    <button onClick={handleCopy} className="absolute top-2 right-2 text-gray-400 hover:text-white transition duration-300">
+                        <FaCopy size={18} />
+                    </button>
+                    <SyntaxHighlighter
+                        language={selectedLanguage.toLowerCase()}
+                        style={dracula}
+                        className="rounded-lg overflow-hidden !bg-transparent"
+                    >
+                        {codeSnippets[selectedLanguage]}
+                    </SyntaxHighlighter>
+                    {copySuccess && <p className="text-green-500 mt-2 text-sm">{copySuccess}</p>}
+                </div>
+
             </div>
         </div>
     );
