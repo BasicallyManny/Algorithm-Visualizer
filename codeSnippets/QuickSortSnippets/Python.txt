@@ -1,0 +1,43 @@
+import random
+
+def hoare_partition(array, low, high):
+    # Randomly select a pivot index between low and high
+    pivot_index = random.randint(low, high)
+    
+    # Swap the randomly chosen pivot with the first element
+    array[low], array[pivot_index] = array[pivot_index], array[low]
+    
+    # Now the pivot is the first element
+    pivot = array[low]
+    
+    i = low - 1
+    j = high + 1
+
+    while True:
+        # Move i to the right until an element >= pivot is found
+        i += 1
+        while array[i] < pivot:
+            i += 1
+
+        # Move j to the left until an element <= pivot is found
+        j -= 1
+        while array[j] > pivot:
+            j -= 1
+
+        # If i and j have crossed, return the partition index
+        if i >= j:
+            return j
+
+        # Swap elements at i and j
+        array[i], array[j] = array[j], array[i]
+
+def quickSort(array, low, high):
+    if low < high:
+        # Partition the array using Hoare's partition scheme
+        pi = partition(array, low, high)
+        
+        # Recursively sort the two halves
+        quickSort(array, low, pi)     # Note: "pi", not "pi-1"
+        quickSort(array, pi + 1, high)  # pi + 1 starts from the next segment
+
+    return array

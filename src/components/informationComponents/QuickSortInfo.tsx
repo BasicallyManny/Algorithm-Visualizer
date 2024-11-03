@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { FaCopy } from "react-icons/fa";
@@ -9,6 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 const QuickSortInfo: React.FC = () => {
     const [selectedLanguage, setSelectedLanguage] = useState<string>('JavaScript');
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
+    const [codeSnippet, setCodeSnippet] = useState<string>('');
 
     const toggleSection = (section: string) => {
         setExpandedSection(expandedSection === section ? null : section);
@@ -16,217 +17,41 @@ const QuickSortInfo: React.FC = () => {
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(codeSnippets[selectedLanguage]);
+            await navigator.clipboard.writeText(codeSnippet);
             toast.success('Copied to clipboard!');
         } catch {
             toast.error('Failed to copy');
         }
     };
 
-    const codeSnippets: Record<string, string> = {
-        JavaScript: `function hoarePartition(array, low, high) {
-    // Randomly select a pivot index between low and high
-    const pivotIndex = Math.floor(Math.random() * (high - low + 1)) + low;
-    
-    // Swap the randomly chosen pivot with the first element
-    [array[low], array[pivotIndex]] = [array[pivotIndex], array[low]];
-    
-    // Now the pivot is the first element
-    const pivot = array[low];
-    
-    let i = low - 1;
-    let j = high + 1;
-
-    while (true) {
-        // Move i to the right until an element >= pivot is found
-        do {
-            i++;
-        } while (array[i] < pivot);
-
-        // Move j to the left until an element <= pivot is found
-        do {
-            j--;
-        } while (array[j] > pivot);
-
-        // If i and j have crossed, return the partition index
-        if (i >= j) return j;
-
-        // Swap elements at i and j
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-function quickSort(array, low, high) {
-    if (low < high) {
-        // Partition the array using Hoare's partition scheme
-        const pi = hoarePartition(array, low, high);
-        
-        // Recursively sort the two halves
-        quickSort(array, low, pi);       // Note: "pi", not "pi-1"
-        quickSort(array, pi + 1, high);  // pi + 1 starts from the next segment
-    }
-}
-
-const array = [34, 7, 23, 32, 5, 62];
-quickSort(array, 0, array.length - 1);
-console.log("Sorted array:", array);
-
-`,
-
-        Python: `import random
-
-def hoare_partition(array, low, high):
-    # Randomly select a pivot index between low and high
-    pivot_index = random.randint(low, high)
-    
-    # Swap the randomly chosen pivot with the first element
-    array[low], array[pivot_index] = array[pivot_index], array[low]
-    
-    # Now the pivot is the first element
-    pivot = array[low]
-    
-    i = low - 1
-    j = high + 1
-
-    while True:
-        # Move i to the right until an element >= pivot is found
-        i += 1
-        while array[i] < pivot:
-            i += 1
-
-        # Move j to the left until an element <= pivot is found
-        j -= 1
-        while array[j] > pivot:
-            j -= 1
-
-        # If i and j have crossed, return the partition index
-        if i >= j:
-            return j
-
-        # Swap elements at i and j
-        array[i], array[j] = array[j], array[i]
-
-def quickSort(array, low, high):
-    if low < high:
-        # Partition the array using Hoare's partition scheme
-        pi = partition(array, low, high)
-        
-        # Recursively sort the two halves
-        quickSort(array, low, pi)     # Note: "pi", not "pi-1"
-        quickSort(array, pi + 1, high)  # pi + 1 starts from the next segment
-
-    return array
-        `,
-
-        C: `int hoarePartition(int array[], int low, int high) {
-    // Randomly select a pivot index between low and high
-    int pivotIndex = low + rand() % (high - low + 1);
-    
-    // Swap the randomly chosen pivot with the first element
-    int temp = array[low];
-    array[low] = array[pivotIndex];
-    array[pivotIndex] = temp;
-    
-    // Now the pivot is the first element
-    int pivot = array[low];
-    
-    int i = low - 1;
-    int j = high + 1;
-
-    while (1) {
-        // Move i to the right until an element >= pivot is found
-        do {
-            i++;
-        } while (array[i] < pivot);
-
-        // Move j to the left until an element <= pivot is found
-        do {
-            j--;
-        } while (array[j] > pivot);
-
-        // If i and j have crossed, return the partition index
-        if (i >= j) return j;
-
-        // Swap elements at i and j
-        temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
-
-void quickSort(int array[], int low, int high) {
-    if (low < high) {
-        // Partition the array using Hoare's partition scheme
-        int pi = hoarePartition(array, low, high);
-        
-        // Recursively sort the two halves
-        quickSort(array, low, pi);       // Note: "pi", not "pi-1"
-        quickSort(array, pi + 1, high);  // pi + 1 starts from the next segment
-    }
-}`,
-
-        Java: `import java.util.Random;
-public class QuickSort {
-    public static int hoarePartition(int[] array, int low, int high) {
-        Random random = new Random();
-        
-        // Randomly select a pivot index between low and high
-        int pivotIndex = low + random.nextInt(high - low + 1);
-        
-        // Swap the randomly chosen pivot with the first element
-        int temp = array[low];
-        array[low] = array[pivotIndex];
-        array[pivotIndex] = temp;
-        
-        // Now the pivot is the first element
-        int pivot = array[low];
-        
-        int i = low - 1;
-        int j = high + 1;
-
-        while (true) {
-            // Move i to the right until an element >= pivot is found
-            do {
-                i++;
-            } while (array[i] < pivot);
-
-            // Move j to the left until an element <= pivot is found
-            do {
-                j--;
-            } while (array[j] > pivot);
-
-            // If i and j have crossed, return the partition index
-            if (i >= j) {
-                return j;
+    const fetchCodeSnippet = async (language: string): Promise<string> => {
+        const path = `/codeSnippets/QuickSortSnippets/${language}.txt`;
+        //console.log(`Fetching from: ${path}`); was used for debugging purposes
+        try {
+            const response = await fetch(path);
+            if (!response.ok) {
+                throw new Error(`Error fetching ${language}.txt`);
             }
-
-            // Swap elements at i and j
-            temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
+            return await response.text();
+        } catch (error) {
+            console.error("Failed to fetch code snippet:", error);
+            return '';
         }
-    }
-
-public static void quickSort(int[] array, int low, int high) {
-    if (low < high) {
-        // Partition the array using Hoare's partition scheme
-        int pi = hoarePartition(array, low, high);
-
-        // Recursively sort the two halves
-        quickSort(array, low, pi);       // Note: "pi", not "pi-1"
-        quickSort(array, pi + 1, high);  // pi + 1 starts from the next segment
-        }
-    }
-}
-
-        `
-
     };
+
+
+    useEffect(() => {
+        const loadSnippet = async () => {
+            const snippet = await fetchCodeSnippet(selectedLanguage);
+            setCodeSnippet(snippet);
+        };
+        loadSnippet();
+    }, [selectedLanguage]);
 
     return (
         <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
             {/* Toaster for notifications */}
-            <Toaster position="top-right"/>
+            <Toaster position="top-right" />
             {/* Information Section */}
             <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
                 <h1 className="text-3xl font-bold text-teal-400 mb-4">Quick Sort</h1>
@@ -246,10 +71,12 @@ public static void quickSort(int[] array, int low, int high) {
                     { title: 'Time Complexity', details: ['Best Case: O(nlog(n))', 'Average Case: O(nlog(n))', 'Worst Case: O(n²)'] },
                     { title: 'Space Complexity', details: ['Best Case: O(nlog(n))', 'Average Case: O(nlog(n))', 'Worst Case: O(n)'] },
                     { title: 'Advantages', details: ['Efficient on large data sets', 'Low overhead requires small amount of memory'] },
-                    { title: 'Disadvantages', details: [
-                        'If a bad pivot is chosen it runs in O(n²) time', 
-                        'Not good for small datasets',
-                        'Not a stable sort'] },
+                    {
+                        title: 'Disadvantages', details: [
+                            'If a bad pivot is chosen it runs in O(n²) time',
+                            'Not good for small datasets',
+                            'Not a stable sort']
+                    },
                 ].map(({ title, details }) => (
                     <div key={title} className="transition-all">
                         <button
@@ -278,7 +105,7 @@ public static void quickSort(int[] array, int low, int high) {
                     onChange={(e) => setSelectedLanguage(e.target.value)}
                     className="w-full bg-gray-800 text-white p-2 rounded-lg mb-4 border border-gray-600"
                 >
-                    {Object.keys(codeSnippets).map((language) => (
+                    {['JavaScript', 'Python', 'C', 'Java'].map((language) => (
                         <option key={language} value={language}>
                             {language}
                         </option>
@@ -295,10 +122,9 @@ public static void quickSort(int[] array, int low, int high) {
                         style={dracula}
                         className="rounded-lg overflow-hidden !bg-transparent"
                     >
-                        {codeSnippets[selectedLanguage]}
+                        {codeSnippet}
                     </SyntaxHighlighter>
                 </div>
-
             </div>
         </div>
     );

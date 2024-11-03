@@ -90,7 +90,7 @@ const InsertionSortInfo: React.FC = () => {
                     </div>
                 ))}
             </div>
-
+            {/* Code Snippet Section */}
             <div className="lg:w-2/4 bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4 transition-all">
                 <h3 className="text-2xl font-semibold text-teal-400 mb-4">Insertion Sort Code</h3>
                 <select

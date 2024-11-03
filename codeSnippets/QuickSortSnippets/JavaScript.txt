@@ -1,0 +1,42 @@
+function hoarePartition(array, low, high) {
+    // Randomly select a pivot index between low and high
+    const pivotIndex = Math.floor(Math.random() * (high - low + 1)) + low;
+    
+    // Swap the randomly chosen pivot with the first element
+    [array[low], array[pivotIndex]] = [array[pivotIndex], array[low]];
+    
+    // Now the pivot is the first element
+    const pivot = array[low];
+    
+    let i = low - 1;
+    let j = high + 1;
+
+    while (true) {
+        // Move i to the right until an element >= pivot is found
+        do {
+            i++;
+        } while (array[i] < pivot);
+
+        // Move j to the left until an element <= pivot is found
+        do {
+            j--;
+        } while (array[j] > pivot);
+
+        // If i and j have crossed, return the partition index
+        if (i >= j) return j;
+
+        // Swap elements at i and j
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function quickSort(array, low, high) {
+    if (low < high) {
+        // Partition the array using Hoare's partition scheme
+        const pi = hoarePartition(array, low, high);
+        
+        // Recursively sort the two halves
+        quickSort(array, low, pi);       // Note: "pi", not "pi-1"
+        quickSort(array, pi + 1, high);  // pi + 1 starts from the next segment
+    }
+}
