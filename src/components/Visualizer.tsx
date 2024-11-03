@@ -170,16 +170,19 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         });
     }
 
+    /**
+     * Initiate sorting and collection of animation steps for merge sort
+     */
     mergeSortVisualizer() {
-        const animations = algorithms.mergeSortDispatcher([...this.state.array]);
-        const barHeights = [...this.state.barHeights];
-        const barColors = [...this.state.barColors];
+        const animations = algorithms.mergeSortDispatcher([...this.state.array]); // populate animation array withj merge sort steps from dispatcher
+        const barHeights = [...this.state.barHeights]; //set initial height
+        const barColors = [...this.state.barColors]; //set initial color
 
         this.resetTimeouts(); // Clear previous timeouts
 
         animations.forEach((animation, i) => {
-            const isColorChange = i % 3 !== 2;
-            const timeout = setTimeout(() => {
+            const isColorChange = i % 3 !== 2; //change color every 3 steps of the animation process
+            const timeout = setTimeout(() => {                                          
                 if (isColorChange) {
                     const [barOneIdx, barTwoIdx] = animation;
                     barColors[barOneIdx] = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
@@ -194,6 +197,9 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             this.timeouts.push(timeout);
         });
 
+        /**
+         * After sorting, reset all colors to cyan
+         */
         setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
                 const timeout = setTimeout(() => {
@@ -244,6 +250,11 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
     }
 
+    /**
+     * Toast notify user helper
+     * @param message 
+     * @param type 
+     */
     notifyUser = (message: string, type: string) => {
         if (type === 'success') {
             toast.success(message);
@@ -324,7 +335,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     <button onClick={() => this.resetArray()} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Reset Array</button>
                     <button onClick={() => this.refreshPage()} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Reload</button>
                 </div>
-                {/* Toast container for notifications */}
+                {/* Toast container for notifications */}                           
                 <ToastContainer />
                 {/* Display selected algorithm information */}
                 <div className="bg-gray-700 text-white p-4 rounded mb-4 mt-10">

@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { FaCopy } from "react-icons/fa";
-
+import toast, { Toaster } from 'react-hot-toast';
 
 const InsertionSortInfo: React.FC = () => {
     const [selectedLanguage, setSelectedLanguage] = useState<string>('JavaScript');
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
-    const [copySuccess, setCopySuccess] = useState("");
 
     const toggleSection = (section: string) => {
         setExpandedSection(expandedSection === section ? null : section);
@@ -16,11 +15,9 @@ const InsertionSortInfo: React.FC = () => {
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(codeSnippets[selectedLanguage]);
-            setCopySuccess("Copied!");
-            setTimeout(() => setCopySuccess(""), 2000);
+            toast.success('Copied to clipboard!');
         } catch {
-            setCopySuccess("Failed to copy");
-            setTimeout(() => setCopySuccess(""), 2000);
+            toast.error('Failed to copy');
         }
     };
 
@@ -104,6 +101,8 @@ print("final sorted array: ", insertionSort(array))`,
 
     return (
         <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
+            {/* Toaster for notifications */}
+            <Toaster position="top-right"/>
             {/* Information Section */}
             <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
                 <h1 className="text-3xl font-bold text-teal-400 mb-4">Insertion Sort</h1>
@@ -169,9 +168,7 @@ print("final sorted array: ", insertionSort(array))`,
                     >
                         {codeSnippets[selectedLanguage]}
                     </SyntaxHighlighter>
-                    {copySuccess && <p className="text-green-500 mt-2 text-sm">{copySuccess}</p>}
                 </div>
-
             </div>
         </div>
     );
