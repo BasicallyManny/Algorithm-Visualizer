@@ -1,6 +1,6 @@
 import React from "react";
 import * as algorithms from "../algorithms/sortingAlgorithms";
-import { motion } from 'framer-motion'; // Import framer-motion
+import { motion } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,28 +8,26 @@ import InsertionSortInfo from "./informationComponents/InsertionSortInfo";
 import MergeSortInfo from "./informationComponents/MergeSortInfo";
 import QuickSortInfo from "./informationComponents/QuickSortInfo";
 
-
-
 const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 let isSorting = false;
 
 interface VisualizerProps {
-    ArraySize?: number; // Optional prop for setting the array size
+    ArraySize?: number;
     AnimationSpeed?: number;
-    setArraySize: (size: number) => void;       // Prop to update array size
-    setAnimationSpeed: (speed: number) => void; // Prop to update animation speed
+    setArraySize: (size: number) => void;
+    setAnimationSpeed: (speed: number) => void;
 }
 
 interface VisualizerState {
-    array: number[];       // Represents the current array of heights for the bars
+    array: number[];
     selectedAlgorithm: string;
-    barHeights: number[];  // Stores heights of the bars (initially identical to array)
-    barColors: string[];   // Stores the color of each bar for animation purposes
+    barHeights: number[];
+    barColors: string[];
 }
 
 export default class Visualizer extends React.Component<VisualizerProps, VisualizerState> {
-    private timeouts: NodeJS.Timeout[] = []; // Store timeout IDs
+    private timeouts: NodeJS.Timeout[] = [];
 
     constructor(props: VisualizerProps) {
         super(props);
@@ -51,18 +49,17 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
 
         if (prevProps.AnimationSpeed !== this.props.AnimationSpeed) {
-            this.props.setAnimationSpeed((this.props.AnimationSpeed ?? 25));
+            this.props.setAnimationSpeed(this.props.AnimationSpeed ?? 25);
         }
     }
 
     resetTimeouts() {
-        // Clear all existing timeouts
         this.timeouts.forEach(timeout => clearTimeout(timeout));
         this.timeouts = [];
     }
 
     resetArray(): void {
-        this.resetTimeouts(); // Clear previous timeouts
+        this.resetTimeouts();
         isSorting = false;
         const array: number[] = [];
         const size = this.props.ArraySize || 50;
@@ -92,8 +89,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     visualizeQuickSort(animations: [number, number, string][]) {
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
-
-        this.resetTimeouts(); // Clear previous timeouts
+        this.resetTimeouts();
 
         animations.forEach(([barIdx1, barIdx2, action], i) => {
             const timeout = setTimeout(() => {
@@ -104,7 +100,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     const tempHeight = barHeights[barIdx1];
                     barHeights[barIdx1] = barHeights[barIdx2];
                     barHeights[barIdx2] = tempHeight;
-
                     barColors[barIdx1] = "green";
                     barColors[barIdx2] = "green";
                 } else if (action === 'revert') {
@@ -118,7 +113,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             this.timeouts.push(timeout);
         });
 
-        // After sorting, reset all colors to cyan
         const resetTimeout = setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
                 const timeout = setTimeout(() => {
@@ -138,12 +132,10 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         const animations = algorithms.insertionSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
-
-        this.resetTimeouts(); // Clear previous timeouts
+        this.resetTimeouts();
 
         animations.forEach((animation, i) => {
             const [barIdx, newHeight, action] = animation;
-
             const timeout = setTimeout(() => {
                 switch (action) {
                     case 'current':
@@ -176,18 +168,14 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         isSorting = false;
     }
 
-    /**
-     * Initiate sorting and collection of animation steps for merge sort
-     */
     mergeSortVisualizer() {
-        const animations = algorithms.mergeSortDispatcher([...this.state.array]); // populate animation array withj merge sort steps from dispatcher
-        const barHeights = [...this.state.barHeights]; //set initial height
-        const barColors = [...this.state.barColors]; //set initial color
-
-        this.resetTimeouts(); // Clear previous timeouts
+        const animations = algorithms.mergeSortDispatcher([...this.state.array]);
+        const barHeights = [...this.state.barHeights];
+        const barColors = [...this.state.barColors];
+        this.resetTimeouts();
 
         animations.forEach((animation, i) => {
-            const isColorChange = i % 3 !== 2; //change color every 3 steps of the animation process
+            const isColorChange = i % 3 !== 2;
             const timeout = setTimeout(() => {
                 if (isColorChange) {
                     const [barOneIdx, barTwoIdx] = animation;
@@ -203,9 +191,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             this.timeouts.push(timeout);
         });
 
-        /**
-         * After sorting, reset all colors to cyan
-         */
         setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
                 const timeout = setTimeout(() => {
@@ -219,9 +204,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         isSorting = false;
     }
 
-    /**
-     * Initiate sorting and collection of animation steps   
-     */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
         if (isSorting) {
@@ -230,8 +212,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
         if (selectedAlgorithm === "NOTHING") {
             this.notifyUser("Please select a sorting algorithm before sorting.", 'error');
-        }
-        else if (selectedAlgorithm === "insertionSort") {
+        } else if (selectedAlgorithm === "insertionSort") {
             this.insertionSortVisualizer();
             isSorting = true;
         } else if (selectedAlgorithm === "mergeSort") {
@@ -243,31 +224,21 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
     }
 
-    /**
-     * Render selected algorithm information
-     */
+
     renderSelectedAlgorithmInfo = () => {
         const { selectedAlgorithm } = this.state;
         switch (selectedAlgorithm) {
             case "insertionSort":
-                console.log("Insertion Sort Info Selected");
                 return <InsertionSortInfo key="insertionSort" />;
             case "mergeSort":
-                console.log("Merge Sort Info Selected");
                 return <MergeSortInfo key="mergeSort" />;
             case "quickSort":
-                console.log("Quick Sort Info Selected");
                 return <QuickSortInfo key="quickSort" />;
             default:
                 return <div className="flex align-middle justify-center text-3xl font-bold mb-16 text-white">Please select an algorithm to view information.</div>;
         }
     }
 
-    /**
-     * Toast notify user helper
-     * @param message 
-     * @param type 
-     */
     notifyUser = (message: string, type: string) => {
         if (type === 'success') {
             toast.success(message);
@@ -275,21 +246,17 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             toast.error(message);
         }
     };
-
     render(): JSX.Element {
         const { barHeights, barColors, selectedAlgorithm } = this.state;
 
         return (
             <>
-                {/* Main Flex Container */}
                 <div className="flex flex-col min-h-screen">
-                    {/* Main Content Container */}
                     <div
                         id="visualizer-container"
-                        className="flex flex-col items-center pt-20 mt-10 pb-4 flex-grow h-screen"
+                        className="flex flex-col items-center pt-4 mt-2 pb-4 flex-grow"
                     >
-                        {/* Algorithm Selection Dropdown */}
-                        <div className="mb-4">
+                        <div className="mb-2 w-full flex justify-center">
                             <label className="text-white font-bold mr-2">Select Algorithm:</label>
                             <select
                                 value={selectedAlgorithm}
@@ -303,10 +270,9 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             </select>
                         </div>
 
-                        {/* Visualizer Wrapper */}
                         <div
                             id="visualizer-wrapper"
-                            className="flex justify-center items-end"
+                            className="flex justify-center items-end mt-20"
                             style={{
                                 height: '60vh',
                                 width: '80vw',
@@ -328,8 +294,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             ))}
                         </div>
 
-                        {/* Array Size and Speed Sliders */}
-                        <div id="array-size-selectors" className="flex space-x-4 mt-6">
+                        <div id="array-size-selectors" className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-2">
                             <div className="flex flex-col items-center text-white">
                                 <label className="text-sm font-bold text-white">Array Size: {this.props.ArraySize}</label>
                                 <input
@@ -354,8 +319,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             </div>
                         </div>
 
-                        {/* Control Buttons */}
-                        <div id="buttons" className="flex flex-row space-x-4 mt-6">
+                        <div id="buttons" className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4">
                             <button
                                 onClick={() => this.handleSort()}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -376,7 +340,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                             </button>
                         </div>
 
-                        {/* Toast Container for Notifications */}
                         <ToastContainer
                             style={{
                                 position: 'fixed',
@@ -388,19 +351,15 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         />
                     </div>
 
-                    {/* Display Selected Algorithm Information at Bottom */}
                     <div className="bg-black text-white p-4 rounded-t-lg w-full">
                         {this.renderSelectedAlgorithmInfo()}
                     </div>
                 </div>
             </>
-
-
         );
     }
 }
-
-// Helper function to generate a random integer in a range
+// Utility function to generate a random integer between min and max
 function randomIntFromInterval(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }

@@ -6,21 +6,19 @@ import Navbar from './components/Navbar';
 import SearchVisualizer from './components/SearchVisualizer';
 import About from './components/About';
 
-
-
 const App: React.FC = () => {
   const [arraySize, setArraySize] = useState(50); // State for array size
   const [animationSpeed, setAnimationSpeed] = useState(20); // State for animation speed
 
   return (
-    <div className="flex flex-col min-h-screen ">
+    <div className="flex flex-col min-h-screen">
       {/* Sticky Navbar */}
       <div className="sticky top-0 z-30 bg-gray-800 text-white shadow-md">
         <Navbar />
       </div>
 
       {/* Main content */}
-      <div className="flex-grow bg-black">
+      <div className="flex-grow bg-black min-w-screen pt-16"> {/* Adjust the padding-top to match the navbar height */}
         <Routes>
           <Route path="/" element={<About />} />
           <Route
