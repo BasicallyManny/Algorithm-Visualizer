@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void printArray(int *array, int size) {
+    printf("result: ");
+    for (int i = 0; i < size; i++) printf("%d ", array[i]);
+    printf("\n");
+}
+
+int* merge(int *leftArray, int leftSize, int *rightArray, int rightSize) {
+    int *result = (int*)malloc((leftSize + rightSize) * sizeof(int));
+    int i = 0, j = 0, k = 0;
+
+    // Merge arrays
+    while (i < leftSize && j < rightSize) {
+        if (leftArray[i] < rightArray[j]) {
+            result[k++] = leftArray[i++];
+        } else {
+            result[k++] = rightArray[j++];
+        }
+    }
+
+    // Add remaining elements
+    while (i < leftSize) result[k++] = leftArray[i++];
+    while (j < rightSize) result[k++] = rightArray[j++];
+
+    printArray(result, leftSize + rightSize);
+    return result;
+}
+
+int* mergeSort(int *array, int size) {
+    if (size <= 1) return array;
+
+    int mid = size / 2;
+    int *leftArray = mergeSort(array, mid);
+    int *rightArray = mergeSort(array + mid, size - mid);
+
+    printf("Merging array one and two\n");
+    return merge(leftArray, mid, rightArray, size - mid);
+}
+
+int main() {
+    int array[] = {12, 11, 13, 5, 6, 7};
+    int size = sizeof(array) / sizeof(array[0]);
+    
+    int *sortedArray = mergeSort(array, size);
+    printArray(sortedArray, size);
+    free(sortedArray);
+    return 0;
+}

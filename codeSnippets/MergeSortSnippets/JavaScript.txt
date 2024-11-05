@@ -1,0 +1,33 @@
+function merge(leftArray, rightArray) {
+    let i = 0, j = 0;
+    const result = [];
+
+    // Merge arrays
+    while (i < leftArray.length && j < rightArray.length) {
+        if (leftArray[i] < rightArray[j]) {
+            result.push(leftArray[i]);
+            i++;
+        } else {
+            result.push(rightArray[j]);
+            j++;
+        }
+    }
+
+    // Add remaining elements
+    result.push(...leftArray.slice(i));
+    result.push(...rightArray.slice(j));
+
+    console.log("result:", result);
+    return result;
+}
+
+function mergeSort(array) {
+    if (array.length <= 1) return array;
+
+    const mid = Math.floor(array.length / 2);
+    const leftArray = mergeSort(array.slice(0, mid));
+    const rightArray = mergeSort(array.slice(mid));
+
+    console.log("Merging array one and two");
+    return merge(leftArray, rightArray);
+}

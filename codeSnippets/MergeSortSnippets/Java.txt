@@ -1,0 +1,37 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class MergeSort {
+    public static int[] merge(int[] leftArray, int[] rightArray) {
+        int i = 0, j = 0;
+        ArrayList<Integer> result = new ArrayList<>();
+
+        // Merge arrays
+        while (i < leftArray.length && j < rightArray.length) {
+            if (leftArray[i] < rightArray[j]) {
+                result.add(leftArray[i++]);
+            } else {
+                result.add(rightArray[j++]);
+            }
+        }
+
+        // Add remaining elements
+        while (i < leftArray.length) result.add(leftArray[i++]);
+        while (j < rightArray.length) result.add(rightArray[j++]);
+
+        int[] mergedArray = result.stream().mapToInt(Integer::intValue).toArray();
+        System.out.println("result: " + Arrays.toString(mergedArray));
+        return mergedArray;
+    }
+
+    public static int[] mergeSort(int[] array) {
+        if (array.length <= 1) return array;
+
+        int mid = array.length / 2;
+        int[] leftArray = mergeSort(Arrays.copyOfRange(array, 0, mid));
+        int[] rightArray = mergeSort(Arrays.copyOfRange(array, mid, array.length));
+
+        System.out.println("Merging array one and two");
+        return merge(leftArray, rightArray);
+    }
+}

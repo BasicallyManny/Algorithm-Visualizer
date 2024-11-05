@@ -61,7 +61,7 @@ const QuickSortInfo: React.FC = () => {
                     or is nearly sorted. Once we have the pivot point we partition and swap elements RECURSIVELY until the array is sorted.
                     <br />
                     <br />
-                    In this implementation we use the Hoare’s partition Schema. As it is the most effective due to less <br />
+                    In this implementation we use the Hoare’s partition Schema. As it is the most effective due to less
                     swaps and doesn’t move elements already in the correct position and inserts each element into the correct
                     position in the sorted list.
                 </p>
