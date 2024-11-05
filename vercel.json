@@ -1,12 +1,13 @@
 {
     "routes": [
-        {
-            "src": "/public/(.*)",
-            "dest": "/public/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
+      {
+        "src": "/(.*)",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/public/(.*)",
+        "dest": "/public/$1"
+      }
     ]
-}
+  }
+  
