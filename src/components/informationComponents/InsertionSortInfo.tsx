@@ -45,11 +45,10 @@ const InsertionSortInfo: React.FC = () => {
         };
         loadSnippet();
     }, [selectedLanguage]);
-
     return (
         <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
             <Toaster position="top-right" />
-            <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
+            <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all" style={{ height: '500px', overflowY: 'auto' }}>
                 <h1 className="text-3xl font-bold text-teal-400 mb-4">Insertion Sort</h1>
                 <p className="text-lg leading-relaxed">
                     Insertion sort is a simple sorting algorithm that iterates through the elements of an unsorted list
@@ -76,7 +75,7 @@ const InsertionSortInfo: React.FC = () => {
                     <div key={title} className="transition-all">
                         <button
                             onClick={() => toggleSection(title)}
-                            className="w-full text-left font-semibold text-yellow-400 text-lg bg-gray-700 p-3 rounded-lg hover:bg-gray-600 transition-colors focus:outline-none"
+                            className="w-full text-left font-semibold text-yellow-400 text-lg bg-gray-700 p-3 rounded-lg hover:bg-gray-500 transition-colors focus:outline-none"
                         >
                             {title}
                         </button>
@@ -91,7 +90,7 @@ const InsertionSortInfo: React.FC = () => {
                 ))}
             </div>
             {/* Code Snippet Section */}
-            <div className="lg:w-2/4 bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4 transition-all">
+            <div className="lg:w-2/4 bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4 transition-all" style={{ height: '600px', overflowY: 'auto' }}>
                 <h3 className="text-2xl font-semibold text-teal-400 mb-4">Insertion Sort Code</h3>
                 <select
                     value={selectedLanguage}
@@ -104,9 +103,9 @@ const InsertionSortInfo: React.FC = () => {
                         </option>
                     ))}
                 </select>
-
+    
                 {/* Code Display with Syntax Highlighting */}
-                <div className="relative mb-6 p-4 bg-gray-800 rounded-lg shadow-lg">
+                <div className="relative mb-6 p-4 bg-gray-800 rounded-lg shadow-lg" style={{ height: '500px', overflowY: 'auto' }}>
                     <button onClick={handleCopy} className="absolute top-2 right-2 text-gray-400 hover:text-white transition duration-300">
                         <FaCopy size={18} />
                     </button>
@@ -121,6 +120,7 @@ const InsertionSortInfo: React.FC = () => {
             </div>
         </div>
     );
+    
 };
 
 export default InsertionSortInfo;

@@ -6,6 +6,8 @@ import Navbar from './components/Navbar';
 import SearchVisualizer from './components/SearchVisualizer';
 import About from './components/About';
 
+
+
 const App: React.FC = () => {
   const [arraySize, setArraySize] = useState(50); // State for array size
   const [animationSpeed, setAnimationSpeed] = useState(20); // State for animation speed
@@ -13,7 +15,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen ">
       {/* Sticky Navbar */}
-      <div className="sticky top-0 z-20 bg-gray-800 text-white shadow-md">
+      <div className="sticky top-0 z-30 bg-gray-800 text-white shadow-md">
         <Navbar />
       </div>
 

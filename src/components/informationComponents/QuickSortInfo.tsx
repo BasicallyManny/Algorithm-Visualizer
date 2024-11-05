@@ -49,7 +49,7 @@ const QuickSortInfo: React.FC = () => {
     }, [selectedLanguage]);
 
     return (
-        <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
+        <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6 ">
             {/* Toaster for notifications */}
             <Toaster position="top-right" />
             {/* Information Section */}

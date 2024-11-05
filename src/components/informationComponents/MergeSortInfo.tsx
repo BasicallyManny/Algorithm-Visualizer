@@ -47,7 +47,7 @@ const MergeSortInfo: React.FC = () => {
     }, [selectedLanguage]);
 
     return (
-        <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6">
+        <div className="flex flex-col lg:flex-row max-w-5xl mx-auto p-6 space-y-6 lg:space-y-0 lg:space-x-6 ">
             <Toaster position="top-right" />
             <div className="lg:w-2/4 bg-gray-800 text-white p-6 rounded-lg shadow-lg space-y-6 transition-all">
                 <h1 className="text-3xl font-bold text-teal-400 mb-4">Merge Sort</h1>
