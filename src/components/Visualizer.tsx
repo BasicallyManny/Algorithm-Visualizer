@@ -51,7 +51,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
 
         if (prevProps.AnimationSpeed !== this.props.AnimationSpeed) {
-            this.props.setAnimationSpeed(this.props.AnimationSpeed);
+            this.props.setAnimationSpeed((this.props.AnimationSpeed ?? 25));
         }
     }
 
@@ -113,7 +113,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 }
 
                 this.setState({ barHeights, barColors });
-            }, i * this.props.AnimationSpeed);
+            }, i * (this.props.AnimationSpeed ?? 25));
 
             this.timeouts.push(timeout);
         });
@@ -124,11 +124,11 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 const timeout = setTimeout(() => {
                     barColors[i] = "cyan";
                     this.setState({ barColors });
-                }, i * this.props.AnimationSpeed);
+                }, i * (this.props.AnimationSpeed ?? 25));
 
                 this.timeouts.push(timeout);
             }
-        }, animations.length * this.props.AnimationSpeed);
+        }, animations.length * (this.props.AnimationSpeed ?? 25));
 
         this.timeouts.push(resetTimeout);
         isSorting = false;
@@ -169,7 +169,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 }
 
                 this.setState({ barHeights, barColors });
-            }, i * this.props.AnimationSpeed);
+            }, i * (this.props.AnimationSpeed ?? 25));
 
             this.timeouts.push(timeout);
         });
@@ -198,7 +198,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     barHeights[barOneIdx] = newHeight;
                 }
                 this.setState({ barHeights, barColors });
-            }, i * this.props.AnimationSpeed);
+            }, i * (this.props.AnimationSpeed ?? 25));
 
             this.timeouts.push(timeout);
         });
@@ -211,11 +211,11 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 const timeout = setTimeout(() => {
                     barColors[i] = PRIMARY_COLOR;
                     this.setState({ barColors });
-                }, i * this.props.AnimationSpeed);
+                }, i * (this.props.AnimationSpeed ?? 25));
 
                 this.timeouts.push(timeout);
             }
-        }, animations.length * this.props.AnimationSpeed);
+        }, animations.length * (this.props.AnimationSpeed ?? 25));
         isSorting = false;
     }
 
@@ -259,7 +259,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 console.log("Quick Sort Info Selected");
                 return <QuickSortInfo key="quickSort" />;
             default:
-                return <div className="flex align-middle justify-center text-3xl font-bold mb-4">Please select an algorithm to view information.</div>;
+                return <div className="flex align-middle justify-center text-3xl font-bold mb-16 text-white">Please select an algorithm to view information.</div>;
         }
     }
 
