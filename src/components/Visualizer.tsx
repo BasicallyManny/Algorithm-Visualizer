@@ -12,6 +12,9 @@ const PRIMARY_COLOR = 'turquoise';
 const SECONDARY_COLOR = 'red';
 let isSorting = false;
 
+/**
+ *  Visualizer Props    
+ */
 interface VisualizerProps {
     ArraySize?: number;
     AnimationSpeed?: number;
@@ -29,6 +32,9 @@ interface VisualizerState {
 export default class Visualizer extends React.Component<VisualizerProps, VisualizerState> {
     private timeouts: NodeJS.Timeout[] = [];
 
+    /*
+     * Changing the state rerenders the component
+     */
     constructor(props: VisualizerProps) {
         super(props);
         this.state = {
@@ -42,7 +48,10 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     componentDidMount(): void {
         this.resetArray();
     }
-
+    /**
+     * Updates on each render
+     * @param prevProps 
+     */
     componentDidUpdate(prevProps: VisualizerProps): void {
         if (prevProps.ArraySize !== this.props.ArraySize) {
             this.resetArray();
@@ -204,6 +213,10 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         isSorting = false;
     }
 
+    /**
+     * selects the algorithm to be used for sorting the array
+     * @returns void
+     */
     handleSort(): void {
         const { selectedAlgorithm } = this.state;
         if (isSorting) {
@@ -224,7 +237,10 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }
     }
 
-
+    /**
+     * Returns the appropriate component for the selected algorithm information
+     * @returns JSX.Element
+     */
     renderSelectedAlgorithmInfo = () => {
         const { selectedAlgorithm } = this.state;
         switch (selectedAlgorithm) {
@@ -238,7 +254,11 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 return <div className="flex align-middle justify-center text-3xl font-bold mb-16 text-white">Please select an algorithm to view information.</div>;
         }
     }
-
+    /**
+     * Toast notification function
+     * @param message 
+     * @param type 
+     */
     notifyUser = (message: string, type: string) => {
         if (type === 'success') {
             toast.success(message);
