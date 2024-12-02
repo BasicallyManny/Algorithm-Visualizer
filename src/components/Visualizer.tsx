@@ -61,46 +61,56 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             this.props.setAnimationSpeed(this.props.AnimationSpeed ?? 25);
         }
     }
-
+    /* Resets all timeouts */
     resetTimeouts() {
         this.timeouts.forEach(timeout => clearTimeout(timeout));
         this.timeouts = [];
     }
-
+    /**
+     * Resets the array
+     */
     resetArray(): void {
-        this.resetTimeouts();
-        isSorting = false;
-        const array: number[] = [];
+        this.resetTimeouts(); //reset all timeouts
+        isSorting = false; //check if there is a sorting animation
+        const array: number[] = []; //create an empty array
+        //set the array props
         const size = this.props.ArraySize || 50;
         const barColors: string[] = Array(size).fill(PRIMARY_COLOR);
-
+        /* fill the array with random heights */
         for (let i = 0; i < size; i++) {
             array.push(randomIntFromInterval(5, 730));
         }
-
+        //update the react state
         this.setState({
             array,
             barHeights: array,
             barColors,
         });
     }
-
+    /* Refreshes the page */
     refreshPage(): void {
         window.location.reload();
     }
-
+    /**
+     * Runs the quicksort animation
+     */
     quickSortVisualizer = () => {
-        const array = this.state.array.slice();
-        const animations = algorithms.quickSortDispatcher(array);
-        this.visualizeQuickSort(animations);
+        const array = this.state.array.slice(); //copy the subarrays
+        const animations = algorithms.quickSortDispatcher(array);//get the steps of the animation
+        this.visualizeQuickSort(animations); //visualize the animation
     };
-
+    /**
+     * Animation for quicksort
+     * @param animations 
+     */
     visualizeQuickSort(animations: [number, number, string][]) {
+        //get the height and color states of the array being sorted
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
-        this.resetTimeouts();
-
+        this.resetTimeouts(); //reset all timeouts
+        //loop through the animations
         animations.forEach(([barIdx1, barIdx2, action], i) => {
+            //sequence the animation and update the state
             const timeout = setTimeout(() => {
                 if (action === 'compare') {
                     barColors[barIdx1] = SECONDARY_COLOR;
@@ -116,12 +126,14 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                     barColors[barIdx2] = PRIMARY_COLOR;
                 }
 
+                //update the state
                 this.setState({ barHeights, barColors });
-            }, i * (this.props.AnimationSpeed ?? 25));
+            }, i * (this.props.AnimationSpeed ?? 25)); //set the animation speed
 
-            this.timeouts.push(timeout);
+            this.timeouts.push(timeout); //timeout to visualzie the animation
         });
 
+        //reset the colors
         const resetTimeout = setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
                 const timeout = setTimeout(() => {
@@ -136,53 +148,72 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         this.timeouts.push(resetTimeout);
         isSorting = false;
     }
-
+    /**
+     * Runs the insertionsort animation
+     */
     insertionSortVisualizer() {
-        const animations = algorithms.insertionSortDispatcher([...this.state.array]);
-        const barHeights = [...this.state.barHeights];
+        const animations = algorithms.insertionSortDispatcher([...this.state.array]); //get the steps of the animation
+        const barHeights = [...this.state.barHeights]; //get
         const barColors = [...this.state.barColors];
-        this.resetTimeouts();
-
+        this.resetTimeouts(); //reset all timeouts
+        //loop through the animations
         animations.forEach((animation, i) => {
-            const [barIdx, newHeight, action] = animation;
+            const [barIdx, newHeight, action] = animation; //get the index of the bar, the new height and the action    
+            //sequence the animation and update the state
             const timeout = setTimeout(() => {
                 switch (action) {
-                    case 'current':
+                    case 'current': //highlight the current element
                         barColors[barIdx] = 'orange';
                         break;
-                    case 'compare':
+                    case 'compare': //highlight the element being compared
                         barColors[barIdx] = 'red';
                         break;
-                    case 'swap':
+                    case 'swap': //swap the current element with the comparitor
                         barHeights[barIdx] = newHeight;
+                        barColors[barIdx] = PRIMARY_COLOR; //hjighlight the swapped element
+                        break;
+                    case 'insert': //insert the current element
+                        barHeights[barIdx] = newHeight; //upodate the height of the bar index
+                        barColors[barIdx] = 'blue'; //highlight the inserted element
+                        break;
+                    case 'sorted': //highlight the sorted element
                         barColors[barIdx] = PRIMARY_COLOR;
                         break;
-                    case 'insert':
-                        barHeights[barIdx] = newHeight;
-                        barColors[barIdx] = 'blue';
-                        break;
-                    case 'sorted':
-                        barColors[barIdx] = PRIMARY_COLOR;
-                        break;
-                    case 'revert':
+                    case 'revert': //reset the highlighted element
                         barColors[barIdx] = SECONDARY_COLOR;
                         break;
                 }
-
+                //update the state
                 this.setState({ barHeights, barColors });
-            }, i * (this.props.AnimationSpeed ?? 25));
-
+            }, i * (this.props.AnimationSpeed ?? 25)); //set the animation speed
+            //add the timeout to the timeouts array 
             this.timeouts.push(timeout);
         });
-        isSorting = false;
+        isSorting = false; //reset isSorting
     }
-
+    /**
+     * Runs the mergesort animation
+     */
+    /**
+     * Visualizes the merge sort algorithm by animating the sorting process.
+     * 
+     * This method performs the following steps:
+     * 1. Generates the merge sort animations.
+     * 2. Updates the bar heights and colors based on the animations.
+     * 3. Schedules timeouts to visualize each step of the sorting process.
+     * 4. Resets the bar colors to the primary color after sorting is complete.
+     * 
+     * @remarks
+     * This method uses the state properties `array`, `barHeights`, and `barColors`.
+     * It also uses the `AnimationSpeed` prop for timing the animations.
+     * 
+     * @returns {void}
+     */
     mergeSortVisualizer() {
         const animations = algorithms.mergeSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
         const barColors = [...this.state.barColors];
         this.resetTimeouts();
-
         animations.forEach((animation, i) => {
             const isColorChange = i % 3 !== 2;
             const timeout = setTimeout(() => {
@@ -212,6 +243,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         }, animations.length * (this.props.AnimationSpeed ?? 25));
         isSorting = false;
     }
+
 
     /**
      * selects the algorithm to be used for sorting the array
