@@ -194,21 +194,6 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
     /**
      * Runs the mergesort animation
      */
-    /**
-     * Visualizes the merge sort algorithm by animating the sorting process.
-     * 
-     * This method performs the following steps:
-     * 1. Generates the merge sort animations.
-     * 2. Updates the bar heights and colors based on the animations.
-     * 3. Schedules timeouts to visualize each step of the sorting process.
-     * 4. Resets the bar colors to the primary color after sorting is complete.
-     * 
-     * @remarks
-     * This method uses the state properties `array`, `barHeights`, and `barColors`.
-     * It also uses the `AnimationSpeed` prop for timing the animations.
-     * 
-     * @returns {void}
-     */
     mergeSortVisualizer() {
         const animations = algorithms.mergeSortDispatcher([...this.state.array]);
         const barHeights = [...this.state.barHeights];
@@ -216,6 +201,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
         this.resetTimeouts();
         animations.forEach((animation, i) => {
             const isColorChange = i % 3 !== 2;
+            //Schedules timeouts to visualize each step of the sorting process.
             const timeout = setTimeout(() => {
                 if (isColorChange) {
                     const [barOneIdx, barTwoIdx] = animation;
@@ -230,7 +216,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
 
             this.timeouts.push(timeout);
         });
-
+        //Resets the bar colors to the primary color after sorting is complete.
         setTimeout(() => {
             for (let i = 0; i < barColors.length; i++) {
                 const timeout = setTimeout(() => {
@@ -298,6 +284,18 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             toast.error(message);
         }
     };
+    /**
+     * Renders the main visualization component of the sorting algorithm.
+     * This function is responsible for rendering the UI elements including:
+     * - Algorithm selection dropdown
+     * - Visualization of the array as bars
+     * - Array size and animation speed controls
+     * - Action buttons (Sort, Reset Array, Reload)
+     * - Toast notifications
+     * - Selected algorithm information
+     * 
+     * @returns {JSX.Element} The rendered React component
+     */
     render(): JSX.Element {
         const { barHeights, barColors, selectedAlgorithm } = this.state;
 
@@ -410,6 +408,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
             </>
         );
     }
+
 }
 // Utility function to generate a random integer between min and max
 function randomIntFromInterval(min: number, max: number) {
