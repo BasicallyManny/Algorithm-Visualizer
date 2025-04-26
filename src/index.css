@@ -1,24 +1,25 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 .Toastify__toast-container {
-    z-index: 9999; /* Ensure it's above other elements */
+  z-index: 9999; /* Ensure it's above other elements */
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: white;
-    cursor: pointer;
-  }
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
 
+.array-bar {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 
-  .array-bar {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box; 
-  }
-  

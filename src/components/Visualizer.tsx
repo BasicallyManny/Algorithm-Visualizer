@@ -304,9 +304,9 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                 <div className="flex flex-col min-h-screen">
                     <div
                         id="visualizer-container"
-                        className="flex flex-col items-center pt-4 mt-2 pb-4 flex-grow"
+                        className="flex flex-col items-center pt-4 mt-2 pb-4 "
                     >
-                        <div className="mb-2 w-full flex justify-center">
+                        <div className="mb-2 mt-10 w-full flex flex-col justify-center items-center">
                             <label className="text-white font-bold mr-2">Select Algorithm:</label>
                             <select
                                 value={selectedAlgorithm}
@@ -353,7 +353,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                                     max="50"
                                     value={this.props.ArraySize}
                                     onChange={(e) => this.props.setArraySize(Number(e.target.value))}
-                                    className="w-64 appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                                    className="w-64 appearance-none h-2 rounded-full bg-violet-400 cursor-pointer"
                                 />
                             </div>
                             <div className="flex flex-col items-center text-white">
@@ -364,7 +364,7 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                                     max="100"
                                     value={this.props.AnimationSpeed}
                                     onChange={(e) => this.props.setAnimationSpeed(Number(e.target.value))}
-                                    className="w-64 appearance-none h-2 rounded-full bg-purple-700 cursor-pointer"
+                                    className="w-64 appearance-none h-2 rounded-full bg-violet-400 cursor-pointer"
                                 />
                             </div>
                         </div>
@@ -372,19 +372,19 @@ export default class Visualizer extends React.Component<VisualizerProps, Visuali
                         <div id="buttons" className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4">
                             <button
                                 onClick={() => this.handleSort()}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                className="bg-violet-200 hover:bg-violet-500 text-white font-bold py-2 px-4 rounded"
                             >
                                 Sort
                             </button>
                             <button
                                 onClick={() => this.resetArray()}
-                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                className="bg-indigo-400 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Reset Array
                             </button>
                             <button
                                 onClick={() => this.refreshPage()}
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                className="bg-green-300 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                             >
                                 Reload
                             </button>
